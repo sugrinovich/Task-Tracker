@@ -1,0 +1,132 @@
+/* ==========================================================================
+   Task Tracker — глобальные стили
+   1. Цвета темы (светлая в :root, тёмная в @media (prefers-color-scheme: dark))
+   2. Reset
+   ========================================================================== */
+
+
+/* ---------- 1. Токены: светлая тема (по умолчанию) ---------- */
+:root {
+  color-scheme: light;
+
+  /* Фоны и поверхности */
+  --bg-main: #F8FAFC;
+  --surface-column: #F1F5F9;
+  --surface-card: #FFFFFF;
+  --surface-card-hover: #FAFAFA;
+  --border-subtle: #E2E8F0;
+
+  /* Текст */
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+  --text-on-accent: #FFFFFF;
+
+  /* Сайдбар */
+  --sidebar-gradient: linear-gradient(180deg, #1B2136 0%, #101424 100%);
+  --sidebar-active-item: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+
+  /* Кнопки */
+  --btn-primary-gradient: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+  --btn-primary-hover: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+
+  /* Бейджи категорий */
+  --tag-design-bg: #e1e8ff;
+  --tag-design-fg: #4F46E5;
+  --tag-dev-bg: #FFF7ED;
+  --tag-dev-fg: #EA580C;
+  --tag-mktg-bg: #ECFDF5;
+  --tag-mktg-fg: #059669;
+
+  /* Тени */
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(15, 23, 42, 0.04);
+  --shadow-card-hover: 0 4px 14px rgba(15, 23, 42, 0.10);
+
+  /* Фокус при навигации с клавиатуры */
+  --focus-ring: #6366F1;
+}
+
+
+/* ---------- 1. Токены: тёмная тема (по настройке системы) ---------- */
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: dark;
+
+    --bg-main: #0B0F19;
+    --surface-column: #111625;
+    --surface-card: #161F33;
+    --surface-card-hover: #1E2942;
+    --border-subtle: #1F293D;
+
+    --text-primary: #F1F5F9;
+    --text-secondary: #94A3B8;
+    --text-muted: #64748B;
+
+    --sidebar-gradient: linear-gradient(180deg, #131A2E 0%, #090D17 100%);
+    --sidebar-active-item: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+
+    --btn-primary-gradient: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+    --btn-primary-hover: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+
+    --tag-design-bg: #1E1B4B;
+    --tag-design-fg: #818CF8;
+    --tag-dev-bg: #311B14;
+    --tag-dev-fg: #FB923C;
+    --tag-mktg-bg: #064E3B;
+    --tag-mktg-fg: #34D399;
+
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --shadow-card-hover: 0 4px 14px rgba(0, 0, 0, 0.45);
+
+    --focus-ring: #818CF8;
+  }
+}
+
+
+/* ---------- 2. Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

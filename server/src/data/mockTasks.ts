@@ -53,7 +53,7 @@ export const tasks: Task[] = [
     id: "task-4",
     status: "todo",
     category: "marketing",
-    title: "Тексты для сторов",
+    title: "Тексты для сторисов",
     description: null,
     date: "2026-10-14T09:00:00Z",
     checklist_progress: {
