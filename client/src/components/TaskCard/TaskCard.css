@@ -10,8 +10,6 @@
     box-shadow: var(--shadow-card);
     transition: background-color 0.15s ease, box-shadow 0.15s ease;
     cursor: pointer;
-    width: 300px;
-    margin-left: 100px;
 }
 
 .taskCard:hover {
@@ -55,13 +53,15 @@
 
 .taskCard__menu {
     margin-left: auto;
-    padding: 0 4px;
+    padding: 4px 4px;
     color: var(--text-muted);
-    transition: color 0.15s ease;
+    transition: color 0.15s ease, background-color 0.15s ease;
+    border-radius: 10px;
 }
 
 .taskCard__menu:hover {
     color: var(--text-primary);
+    background-color: #F1F3F7;
 }
 
 
@@ -98,7 +98,7 @@
 
 .taskCard__date,
 .taskCard__progress {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--text-secondary);
     display: flex;
     align-items: center;

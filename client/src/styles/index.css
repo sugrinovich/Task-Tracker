@@ -11,10 +11,10 @@
 
   /* Фоны и поверхности */
   --bg-main: #F8FAFC;
-  --surface-column: #F1F5F9;
+  --surface-column: #EDF0F7;
   --surface-card: #FFFFFF;
   --surface-card-hover: #FAFAFA;
-  --border-subtle: #E2E8F0;
+  --border-subtle: #DFE5F4;
 
   /* Текст */
   --text-primary: #0F172A;

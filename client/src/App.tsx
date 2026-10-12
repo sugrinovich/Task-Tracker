@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getTasks } from "./api/tasks";
 import type { Task } from "./types/task";
-import TaskCard from "./components/TaskCard/TaskCard";
+import KanbanColum from "./components/KanbanColum/KanbanColum";
 
 
 function App() {
@@ -15,9 +15,7 @@ function App() {
     <div style={{
       backgroundColor: "var(--bg-main)"
     }}>
-      {tasks.map(task => (
-        <TaskCard key={task.id} task={task}/>
-      ))}
+      <KanbanColum status="todo" tasks={tasks}/>
     </div>
   )
 }

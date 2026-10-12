@@ -1,0 +1,66 @@
+.KanbanColum {
+    background-color: var(--surface-column);
+    border-radius: 20px;
+    padding: 10px;
+    width: 300px;
+}
+
+
+.KanbanColum__header {
+    display: flex;
+    align-items: center;
+    padding: 2px 4px;
+}
+.KanbanColum__title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--text-primary);
+}
+.KanbanColum__title::before {
+    content: "";
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--dot, #7081D7);
+}
+.KanbanColum__total {
+    margin-left: auto;
+    padding: 4px 10px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    background-color: var(--border-subtle);
+    border-radius: 10px;
+}
+
+
+.KanbanColum__body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 4px;
+    margin: 11px -4px 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-subtle) transparent;
+}
+.KanbanColum__btn {
+    padding: 12px 0;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    background-color: var(--border-subtle);
+    border-radius: 12px;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+ 
+.KanbanColum__btn:hover {
+    color: var(--text-primary);
+    background-color: var(--surface-card);
+}
