@@ -3,6 +3,7 @@ import taskRouter from './routes/taskRouters';
 
 const app = express();
 
+app.use(express.json());
 app.use("/api/tasks", taskRouter)
 
 app.listen(3000, () => {

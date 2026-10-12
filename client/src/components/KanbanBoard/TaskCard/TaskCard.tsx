@@ -53,7 +53,7 @@ function TaskCard({ task }: TaskCardsProps) {
                                 <button className="menu__btn" type="button"
                                     onClick={() => setOpen(false)}
                                 >
-                                    Выбрать
+                                    Приступить
                                 </button>
                                 <hr className="line"/>
                                 <button className="menu__btn" type="button"

@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { tasks } from "../data/mockTasks";
+import { TaskStatus } from "../types/task";
 
 
 const taskRouter = Router();
@@ -45,6 +46,7 @@ taskRouter.get("/:id", (req: Request, res: Response) => {
     res.json(task)
 });
 
+
 taskRouter.delete("/:id", (req: Request, res: Response) => {
     const task_idx = tasks.findIndex(t => t.id === req.params.id);
 
@@ -56,6 +58,27 @@ taskRouter.delete("/:id", (req: Request, res: Response) => {
     tasks.splice(task_idx, 1);
 
     res.status(204).send();
+})
+
+
+taskRouter.patch("/:id", (req: Request, res: Response) => {
+    const task = tasks.find(t => t.id === req.params.id);
+
+    if (!task) {
+        res.status(404).json({ message: "Task not found" });
+        return;
+    }
+
+    const { status } = req.body ?? {};
+
+    if (typeof status !== "string" || !STATUSES.includes(status)) {
+        res.status(400).json({ message: "Invalid status"});
+        return;
+    }
+
+    task.status = status as TaskStatus;
+
+    res.json(task);
 })
 
 
