@@ -45,6 +45,19 @@ taskRouter.get("/:id", (req: Request, res: Response) => {
     res.json(task)
 });
 
+taskRouter.delete("/:id", (req: Request, res: Response) => {
+    const task_idx = tasks.findIndex(t => t.id === req.params.id);
+
+    if (task_idx === -1) {
+        res.status(404).json({ message: "Task not found" });
+        return;
+    }
+    
+    tasks.splice(task_idx, 1);
+
+    res.status(204).send();
+})
+
 
 
 
