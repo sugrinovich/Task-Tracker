@@ -1,11 +1,11 @@
-import type { Task } from "../../../types/task";
+import type { Task, TaskStatus } from "../../../types/task";
 import { Calendar, SquareCheck, EllipsisVertical} from "lucide-react";
 import { dateFormatter } from "../../../utils/dateFormatter";
 import "./TaskCard.css"
 import { useState } from "react";
 import { useContext } from "react";
 import { TasksContext } from "../../../context/TasksContext";
-import { deleteTask } from "../../../api/tasks";
+import { deleteTask, changeStatusTask } from "../../../api/tasks";
 
 
 type TaskCardsProps = {
@@ -24,10 +24,21 @@ function TaskCard({ task }: TaskCardsProps) {
     const [open, setOpen] = useState(false);
     const ctx = useContext(TasksContext)
 
-    async function handleClick() {
+    async function handleClickDelete() {
         try {
             await deleteTask(task.id);
             ctx?.onDelete(task.id);
+        } catch(e) {
+            console.error(e)
+        } finally {
+            setOpen(false);
+        }
+    }
+
+    async function handleClickChange(status: TaskStatus) {
+        try {
+            await changeStatusTask(task.id, "in_progress")
+            ctx?.onChage(task.id, status)
         } catch(e) {
             console.error(e)
         } finally {
@@ -51,7 +62,7 @@ function TaskCard({ task }: TaskCardsProps) {
                             <div className="menuBackdrop" onClick={() => setOpen(false)} />
                             <div className="menu">
                                 <button className="menu__btn" type="button"
-                                    onClick={() => setOpen(false)}
+                                    onClick={() => handleClickChange("in_progress")}
                                 >
                                     Приступить
                                 </button>
@@ -69,7 +80,7 @@ function TaskCard({ task }: TaskCardsProps) {
                                 </button>
                                 <hr className="line"/>
                                 <button className="menu__btn" type="button"
-                                    onClick={() => handleClick()}
+                                    onClick={() => handleClickDelete()}
                                 >
                                     Удалить
                                 </button>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getTasks } from "./api/tasks";
-import type { Task } from "./types/task";
+import type { Task, TaskStatus } from "./types/task";
 import KanbanBoard from "./components/KanbanBoard/KanbanBoard";
 import { TasksContext } from "./context/TasksContext";
 
@@ -18,7 +18,29 @@ function App() {
   }, []);
 
   function handleDelete(id: string) {
+    const originalTasks = [...tasks];
+
     setTasks(prev => prev.filter(el => el.id !== id))
+
+    getTasks()
+      .then(setTasks)
+      .catch((e) => {
+        setError(e.message),
+        setTasks(originalTasks)
+      }) 
+  }
+  function handleChange(id: string, status: TaskStatus) {
+    const originalTasks = [...tasks];
+
+    setTasks(prev => prev.map(task => 
+      task.id === id ? { ...task, status: status} : task
+    ));
+    getTasks()
+      .then(setTasks)
+      .catch((e) => {
+        setError(e.message),
+        setTasks(originalTasks)
+      }) 
   }
 
   if (loading) {
@@ -31,7 +53,7 @@ function App() {
 
 
   return  (
-    <TasksContext.Provider value={{ onDelete: handleDelete }}>
+    <TasksContext.Provider value={{ onDelete: handleDelete, onChage: handleChange }}>
       <KanbanBoard tasks={tasks}/>
     </TasksContext.Provider>
     

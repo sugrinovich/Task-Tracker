@@ -12,9 +12,25 @@ export async function getTasks(): Promise<Task[]> {
 }
 
 export async function deleteTask(id: string): Promise<void> {
-    const res = await fetch(`/api/tasks/${id}`, {method: "DELETE" });
+    const res = await fetch(`/api/tasks/${id}`, 
+                            {method: "DELETE" }
+    );
 
     if (!res.ok) {
         throw new Error(`Ошибка удаления задачи: ${res.status}`);
     }
+}
+
+export async function changeStatusTask(id: string, status: string): Promise<Task> {
+    const res = await fetch(`/api/tasks/${id}`,
+                            {method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ status })
+    });
+
+    if (!res.ok) {
+        throw new Error(`Ошибка изменения статуса задачи: ${res.status}`);
+    }
+
+    return res.json();
 }
