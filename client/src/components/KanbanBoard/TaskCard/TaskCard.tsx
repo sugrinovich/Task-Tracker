@@ -11,12 +11,15 @@ import { deleteTask, changeStatusTask } from "../../../api/tasks";
 type TaskCardsProps = {
     task: Task;
 }
-
-
 const CATEGORY_LABELS = {
     design: "Дизайн",
     dev: "Разработка",
     marketing: "Маркетинг",
+};
+const BUTTON_CONFIG = {
+    todo: { text: "Приступить", nextStatus: "in_progress" as TaskStatus },
+    in_progress: { text: "Закончить", nextStatus: "done" as TaskStatus },
+    done: { text: "Выполнено", nextStatus: "done" as TaskStatus }
 };
 
 
@@ -37,7 +40,7 @@ function TaskCard({ task }: TaskCardsProps) {
 
     async function handleClickChange(status: TaskStatus) {
         try {
-            await changeStatusTask(task.id, "in_progress")
+            await changeStatusTask(task.id, status)
             ctx?.onChage(task.id, status)
         } catch(e) {
             console.error(e)
@@ -45,6 +48,9 @@ function TaskCard({ task }: TaskCardsProps) {
             setOpen(false);
         }
     }
+
+    const isDone = task.status === "done";
+    const currentBtn = BUTTON_CONFIG[task.status];
     
     return (
         <div className={`taskCard taskCard--${task.category}`}>
@@ -61,10 +67,13 @@ function TaskCard({ task }: TaskCardsProps) {
                         <>
                             <div className="menuBackdrop" onClick={() => setOpen(false)} />
                             <div className="menu">
-                                <button className="menu__btn" type="button"
-                                    onClick={() => handleClickChange("in_progress")}
+                                <button 
+                                    className={`menu__btn ${isDone ? "menu__btn--done" : ""}`}
+                                    type="button" 
+                                    disabled={isDone}
+                                    onClick={() => handleClickChange(currentBtn.nextStatus)}
                                 >
-                                    Приступить
+                                    {currentBtn.text}
                                 </button>
                                 <hr className="line"/>
                                 <button className="menu__btn" type="button"

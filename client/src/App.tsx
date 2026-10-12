@@ -35,6 +35,7 @@ function App() {
     setTasks(prev => prev.map(task => 
       task.id === id ? { ...task, status: status} : task
     ));
+    
     getTasks()
       .then(setTasks)
       .catch((e) => {

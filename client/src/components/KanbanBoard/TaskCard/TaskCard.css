@@ -102,6 +102,9 @@
 .menu__btn:hover {
     background-color: var(--surface-card-hover);
 }
+.menu__btn--done {
+    background-color: var(--surface-card-hover);  
+}
 
 
 /* ---------- Тело ---------- */
