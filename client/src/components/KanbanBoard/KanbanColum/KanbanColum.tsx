@@ -1,4 +1,4 @@
-import type { Task, TaskStatus } from "../../types/task"
+import type { Task, TaskStatus } from "../../../types/task"
 import TaskCard from "../TaskCard/TaskCard";
 import "./KanbanColum.css" 
 
@@ -19,7 +19,7 @@ const STATUS_COLORS: Record<TaskStatus, string> = {
 };
 
 
-function KanbanColum({ tasks, status}: KanbanColumProps) {
+function KanbanColum({ tasks, status }: KanbanColumProps) {
     const tasks_len = tasks.length;
 
     return (
@@ -35,7 +35,7 @@ function KanbanColum({ tasks, status}: KanbanColumProps) {
             <div className="KanbanColum__body">
                 {
                     tasks.map(task => (
-                        <TaskCard task={task}/>
+                        <TaskCard key={task.id} task={task}/>
                     ))
                 }
                 <button className="KanbanColum__btn">+ Добавить задачу</button>

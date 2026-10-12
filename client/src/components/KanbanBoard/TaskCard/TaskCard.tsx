@@ -1,6 +1,6 @@
-import type { Task } from "../../types/task";
+import type { Task } from "../../../types/task";
 import { Calendar, SquareCheck, EllipsisVertical } from "lucide-react";
-import { dateFormatter } from "../../utils/dateFormatter";
+import { dateFormatter } from "../../../utils/dateFormatter";
 import "./TaskCard.css"
 
 

@@ -1,0 +1,6 @@
+.KanbanBoard {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(auto, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+}
