@@ -50,9 +50,7 @@
     background-color: var(--tag-mktg-bg);
     color: var(--tag-mktg-fg);
 }
-
 .taskCard__menu {
-    margin-left: auto;
     padding: 4px 4px;
     color: var(--text-muted);
     transition: color 0.15s ease, background-color 0.15s ease;
@@ -62,6 +60,47 @@
 .taskCard__menu:hover {
     color: var(--text-primary);
     background-color: #F1F3F7;
+}
+.menuWrap { 
+    position: relative;
+    margin-left: auto; 
+}
+.menuBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: transparent; 
+    z-index: 999;
+}
+.menu {
+    position: absolute;
+    top: 0;
+    right: 100%;
+    margin-right: 18px;
+    display: flex;
+    flex-direction: column;
+
+    min-width: 140px;
+    padding: 8px;
+    font-size: 18px;
+    background-color: var(--surface-card);
+    border-radius: 10px;
+    box-shadow: var(--shadow-card-hover);
+}
+.line {
+    color: var(--text-muted);
+    opacity: 20%;
+}
+.menu__btn {
+    display: block;
+    padding: 4px 0px;
+    border-radius: 10px;
+    z-index: 1000;
+}
+.menu__btn:hover {
+    background-color: var(--surface-card-hover);
 }
 
 
@@ -118,3 +157,4 @@
     font-size: 0.75rem;
     font-weight: 600;
 }
+

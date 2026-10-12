@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getTasks } from "./api/tasks";
 import type { Task } from "./types/task";
 import KanbanBoard from "./components/KanbanBoard/KanbanBoard";
+import { TasksContext } from "./context/TasksContext";
 
 
 function App() {
@@ -16,6 +17,9 @@ function App() {
       .finally(() => setLoading(false));
   }, []);
 
+  function handleDelete(id: string) {
+    setTasks(prev => prev.filter(el => el.id !== id))
+  }
 
   if (loading) {
     return <div className="statusMessage">Загрузка...</div>;
@@ -27,7 +31,10 @@ function App() {
 
 
   return  (
-    <KanbanBoard tasks={tasks}/>
+    <TasksContext.Provider value={{ onDelete: handleDelete }}>
+      <KanbanBoard tasks={tasks}/>
+    </TasksContext.Provider>
+    
   )
 }
 
