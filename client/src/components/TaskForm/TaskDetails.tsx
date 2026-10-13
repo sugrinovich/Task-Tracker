@@ -1,13 +1,12 @@
-import type { Task } from "../../types/task";
 import "./TaskDetails.css"
 import type { TaskStatus } from "../../types/task";
 import { Calendar, SquareCheck, FileText } from "lucide-react";
 import { dateTimeFormatter } from "../../utils/dateTimeFormatter";
+import { useParams, useNavigate, useLocation, Navigate } from "react-router-dom";
+import { useContext } from "react";
+import { TasksContext } from "../../context/TasksContext";
 
 
-type TaskDetailsProps = {
-    task: Task;
-};
 const CATEGORY_LABELS = {
     design: "Дизайн",
     dev: "Разработка",
@@ -20,12 +19,22 @@ const COLUM_STATUS: Record<TaskStatus, string> = {
 }
 
 
-function TaskDetails({ task }: TaskDetailsProps) {
-    return (
+function TaskDetails() {
+    const { id } = useParams();
+    const ctx = useContext(TasksContext)
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const task = ctx?.tasks.find(task => task.id === id);
+    const isModal = Boolean(location.state?.backgroundLocation);
+
+    if (!task) return <Navigate to="/" replace />;
+    
+    const content = (
         <div className="TaskDetails">
             <div className="TaskDetails__header">
                 <div className="TaskDetails__tags">
-                    <span className={`TaskDetails__tag TaskDetails__tag--${task.category}`}>{CATEGORY_LABELS[task.category]}</span>
+                    <span className={`TaskDetails__tag TaskDetails__tag--${task.category}`}>{CATEGORY_LABELS[task?.category]}</span>
                     <span className="TaskDetails__status">{COLUM_STATUS[task.status]}</span>
                 </div>
                 <h2 className="TaskDetails__title">{task.title}</h2>
@@ -63,11 +72,14 @@ function TaskDetails({ task }: TaskDetailsProps) {
                 {/* тут потом будет список подзадач */}
             </section>
 
-            <button className="TaskDetails__btn">
+            <button className="TaskDetails__btn"
+                onClick={() => navigate(isModal ? -1 : "/" as any)}>
                 Закрыть
             </button>
         </div>
     );
+
+    return isModal ? <div className="modalBackdrop">{content}</div> : content;
 }
 
 export default TaskDetails;

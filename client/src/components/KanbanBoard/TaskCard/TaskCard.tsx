@@ -2,10 +2,10 @@ import type { Task, TaskStatus } from "../../../types/task";
 import { Calendar, SquareCheck, EllipsisVertical} from "lucide-react";
 import { dateFormatter } from "../../../utils/dateFormatter";
 import "./TaskCard.css"
-import { useState } from "react";
-import { useContext } from "react";
+import { useState, useContext } from "react";
 import { TasksContext } from "../../../context/TasksContext";
 import { deleteTask, changeStatusTask } from "../../../api/tasks";
+import { useLocation, Link } from "react-router-dom";
 
 
 type TaskCardsProps = {
@@ -24,7 +24,7 @@ const BUTTON_CONFIG = {
 
 
 function TaskCard({ task }: TaskCardsProps) {
-    const [open, setOpen] = useState(false);
+    const [openMenu, setOpenMenu] = useState(false);
     const ctx = useContext(TasksContext)
 
     async function handleClickDelete() {
@@ -34,98 +34,124 @@ function TaskCard({ task }: TaskCardsProps) {
         } catch(e) {
             console.error(e)
         } finally {
-            setOpen(false);
+            setOpenMenu(false);
         }
     }
 
     async function handleClickChange(status: TaskStatus) {
         try {
             await changeStatusTask(task.id, status)
-            ctx?.onChage(task.id, status)
+            ctx?.onStatusChage(task.id, status)
         } catch(e) {
             console.error(e)
         } finally {
-            setOpen(false);
+            setOpenMenu(false);
         }
     }
 
     const isDone = task.status === "done";
     const currentBtn = BUTTON_CONFIG[task.status];
+    const location = useLocation();
     
     return (
-        <div className={`taskCard taskCard--${task.category}`}>
-            <div className="taskCard__header">
-                <span className={`taskCard__tag taskCard__tag--${task.category}`}>
-                    {CATEGORY_LABELS[task.category]}
-                </span>
-                <div className="menuWrap">
-                    <button type="button" className="taskCard__menu" onClick={() => setOpen(!open)}>
-                        <EllipsisVertical size={16} />
-                    </button>
+            <Link className={`taskCard taskCard--${task.category}`}
+                to={`/tasks/${task.id}`}
+                state={{ backgroundLocation: location }}
+            >
+                <div className="taskCard__header">
+                    <span className={`taskCard__tag taskCard__tag--${task.category}`}>
+                        {CATEGORY_LABELS[task.category]}
+                    </span>
+                    <div className="menuWrap">
+                        <button type="button" className="taskCard__menu" 
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setOpenMenu(!openMenu);
+                                }}
+                            >
+                            <EllipsisVertical size={16} />
+                        </button> 
+                        {openMenu && (
+                            <>
+                                <div className="menuBackdrop" onClick={(e) => {
+                                    setOpenMenu(false);
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                }}/>
+                                <div className="menu">
+                                    <button 
+                                        className={`menu__btn ${isDone ? "menu__btn--done" : ""}`}
+                                        type="button" 
+                                        disabled={isDone}
+                                        onClick={(e) => {
+                                            handleClickChange(currentBtn.nextStatus)
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                        }}
+                                    >
+                                        {currentBtn.text}
+                                    </button>
+                                    <hr className="line"/>
+                                    <button className="menu__btn" type="button"
+                                        onClick={(e) => {setOpenMenu(false)
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                        }}
+                                    >
+                                        Закрепить
+                                    </button>
+                                    <hr className="line"/>
+                                    <button className="menu__btn" type="button"
+                                        onClick={(e) => {setOpenMenu(false)
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                        }}                               
+                                    >
+                                        Редактировать
+                                    </button>
+                                    <hr className="line"/>
+                                    <button className="menu__btn" type="button"
+                                        onClick={(e) => {handleClickDelete()
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                        }}
+                                    >
+                                        Удалить
+                                    </button>
+                                </div>                        
+                            </>
 
-                    {open && (
-                        <>
-                            <div className="menuBackdrop" onClick={() => setOpen(false)} />
-                            <div className="menu">
-                                <button 
-                                    className={`menu__btn ${isDone ? "menu__btn--done" : ""}`}
-                                    type="button" 
-                                    disabled={isDone}
-                                    onClick={() => handleClickChange(currentBtn.nextStatus)}
-                                >
-                                    {currentBtn.text}
-                                </button>
-                                <hr className="line"/>
-                                <button className="menu__btn" type="button"
-                                    onClick={() => setOpen(false)}
-                                >
-                                    Закрепить
-                                </button>
-                                <hr className="line"/>
-                                <button className="menu__btn" type="button"
-                                    onClick={() => setOpen(false)}
-                                >
-                                    Редактировать
-                                </button>
-                                <hr className="line"/>
-                                <button className="menu__btn" type="button"
-                                    onClick={() => handleClickDelete()}
-                                >
-                                    Удалить
-                                </button>
-                            </div>                        
-                        </>
-
-                    )}
+                        )}
+                    </div>
                 </div>
-            </div>
 
-            <div className="taskCard__body">
-                <h3 className="taskCard__title">{task.title}</h3>
-                {/* {task.description && (
-                    <p className="taskCard__description">{task.description}</p>
-                )} */}
-            </div>
+                <div className="taskCard__body">
+                    <h3 className="taskCard__title">{task.title}</h3>
+                    {/* {task.description && (
+                        <p className="taskCard__description">{task.description}</p>
+                    )} */}
+                </div>
 
-            <div className="taskCard__footer">
-                <p className="taskCard__date">
-                    <Calendar size={16} />
-                    {dateFormatter(task.date)}
-                </p>
-                {(task.checklist_progress) ? (
-                    <p className="taskCard__progress">
-                        <SquareCheck size={16} />
-                        {task.checklist_progress.completed}/{task.checklist_progress.total}
+                <div className="taskCard__footer">
+                    <p className="taskCard__date">
+                        <Calendar size={16} />
+                        {dateFormatter(task.date)}
                     </p>
-                ) : (
-                    <p className="taskCard__progress">
-                        <SquareCheck size={16} />
-                        None
-                    </p>   
-                )}
-                <div className="taskCard__avatar">{task.user.avatar}</div>
-            </div>
-        </div>
+                    {(task.checklist_progress) ? (
+                        <p className="taskCard__progress">
+                            <SquareCheck size={16} />
+                            {task.checklist_progress.completed}/{task.checklist_progress.total}
+                        </p>
+                    ) : (
+                        <p className="taskCard__progress">
+                            <SquareCheck size={16} />
+                            None
+                        </p>   
+                    )}
+                    <div className="taskCard__avatar">{task.user.avatar}</div>
+                </div>
+            </Link>
     );
 }
 

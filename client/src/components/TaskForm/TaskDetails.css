@@ -15,8 +15,22 @@
     box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
     overflow-y: auto;
 }
- 
- 
+
+.modalBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 996;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 24px;
+    overflow-y: auto;
+    background: rgb(0 0 0 / 55%);
+}
+
+
 /* ---------- Шапка ---------- */
 .TaskDetails__header {
     display: flex;

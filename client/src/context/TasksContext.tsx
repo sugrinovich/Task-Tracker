@@ -1,9 +1,10 @@
 import { createContext } from "react";
-import type { TaskStatus } from "../types/task";
+import type { TaskStatus, Task } from "../types/task";
 
 type TasksContextType = {
+    tasks: Task[];
     onDelete: (id: string) => void,
-    onChage: (id: string, status: TaskStatus) => void;
+    onStatusChage: (id: string, status: TaskStatus) => void;
 };
 
 export const TasksContext = createContext<TasksContextType | null>(null);
