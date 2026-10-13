@@ -1,0 +1,202 @@
+/* ---------- Контейнер ---------- */
+.TaskDetails {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--surface-card);
+    border: thin solid var(--border-subtle);
+    border-radius: 20px;
+    padding: 24px;
+    width: 800px;
+    max-width: 90%;
+    height: 750px;
+    max-height: 90%;
+    margin: auto;
+    margin-top: 30px;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
+    overflow-y: auto;
+}
+ 
+ 
+/* ---------- Шапка ---------- */
+.TaskDetails__header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+}
+ 
+.TaskDetails__tags {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+}
+ 
+.TaskDetails__tag {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+ 
+.TaskDetails__tag--design {
+    background-color: var(--tag-design-bg);
+    color: var(--tag-design-fg);
+}
+ 
+.TaskDetails__tag--dev {
+    background-color: var(--tag-dev-bg);
+    color: var(--tag-dev-fg);
+}
+ 
+.TaskDetails__tag--marketing {
+    background-color: var(--tag-mktg-bg);
+    color: var(--tag-mktg-fg);
+}
+ 
+.TaskDetails__status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    background-color: var(--surface-card);
+    border: thin solid var(--border-subtle);
+    border-radius: 999px;
+}
+ 
+.TaskDetails__status::before {
+    content: "";
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--dot, #7081D7);
+}
+ 
+.TaskDetails__title {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text-primary);
+}
+ 
+.TaskDetails__info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+}
+ 
+.TaskDetails__date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+}
+ 
+.TaskDetails__avatar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+ 
+.TaskDetails__initials {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background-color: #1E293B;
+    color: #FFFFFF;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+ 
+.TaskDetails__username {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+ 
+ 
+/* ---------- Описание ---------- */
+.TaskDetails__description {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 20px;
+    border: thin solid var(--border-subtle);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+}
+ 
+.TaskDetails__descriptionTitle {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+ 
+.TaskDetails__descriptionText {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    hyphens: auto;
+}
+ 
+ 
+/* ---------- Чек-лист ---------- */
+.TaskDetails__checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
+    margin-top: 20px;
+    padding: 16px 20px;
+    border: thin solid var(--border-subtle);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    overflow-y: auto;
+}
+ 
+.TaskDetails__checklistTitle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+ 
+.TaskDetails__checklistInfo {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+.TaskDetails__btn {
+    width: 40%;
+    margin: auto;
+    margin-top: 20px;
+    border-radius: 10px;
+    padding: 8px 0;
+    background: var(--btn-primary-gradient);
+    color: var(--surface-card);
+    font-size: 1.2rem;
+    transition: filter 0.4s ease;
+}
+
+.TaskDetails__btn:hover {
+    filter: brightness(0.82);
+}

@@ -3,6 +3,7 @@ import { getTasks } from "./api/tasks";
 import type { Task, TaskStatus } from "./types/task";
 import KanbanBoard from "./components/KanbanBoard/KanbanBoard";
 import { TasksContext } from "./context/TasksContext";
+import TaskDetails from "./components/TaskForm/TaskDetails";
 
 
 function App() {
@@ -35,7 +36,7 @@ function App() {
     setTasks(prev => prev.map(task => 
       task.id === id ? { ...task, status: status} : task
     ));
-    
+
     getTasks()
       .then(setTasks)
       .catch((e) => {
@@ -54,10 +55,10 @@ function App() {
 
 
   return  (
-    <TasksContext.Provider value={{ onDelete: handleDelete, onChage: handleChange }}>
-      <KanbanBoard tasks={tasks}/>
-    </TasksContext.Provider>
-    
+    // <TasksContext.Provider value={{ onDelete: handleDelete, onChage: handleChange }}>
+    //   <KanbanBoard tasks={tasks}/>
+    // </TasksContext.Provider>
+    <TaskDetails task={tasks[1]}/>
   )
 }
 

@@ -1,0 +1,21 @@
+const MONTHS = ["янв", "фев", "мар", "апр", "мая", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"];
+
+
+export function dateTimeFormatter(str: string, now: Date = new Date()) {
+    const date = new Date(str);
+
+    const day = date.getDate();
+    const month = date.getMonth();
+    const year = date.getFullYear();
+
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+
+    const now_day = now.getDate();
+    const now_month = now.getMonth();
+    const now_year = now.getFullYear();
+
+    if (day === now_day && month === now_month && year === now_year) return `Сегодня ${hours}:${minutes}`
+
+    else return `${day} ${MONTHS[month]} ${hours}:${minutes}`
+}
