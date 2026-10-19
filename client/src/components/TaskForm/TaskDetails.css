@@ -211,7 +211,7 @@
  
 .TaskDetails__descriptionText {
     font-size: 1.1rem;
-    line-height: 1.6;
+    line-height: 1.4;
     color: var(--text-secondary);
     hyphens: auto;
 }
@@ -271,8 +271,9 @@
 
 .TaskDetails__subtaskText {
     line-height: 1.4;
-    color: var(--text-primary);
+    color: var(--text-secondary);
     transition: color 0.2s ease;
+    font-size: 1.1rem;
 }
 
 .TaskDetails__subtask--completed .TaskDetails__subtaskText {

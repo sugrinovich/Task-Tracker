@@ -126,7 +126,7 @@ function TaskDetails() {
                                     : "",
                             ].filter(Boolean).join(" ")}
                             onMouseEnter={() => clearSubtaskHighlight(subtask.id)}
-                            onFocus={() => clearSubtaskHighlight(subtask.id)}
+                            // onFocus={() => clearSubtaskHighlight(subtask.id)}
                         >
                             <input type="checkbox"
                                    className="TaskDetails__checklistInput"
