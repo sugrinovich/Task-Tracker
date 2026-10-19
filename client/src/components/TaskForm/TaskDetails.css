@@ -25,7 +25,7 @@
     align-items: center;
 
     padding: 24px;
-    background: rgb(0 0 0 / 55%);
+    background: var(--overlay-backdrop);
     backdrop-filter: blur(3px);
 }
 
@@ -112,19 +112,19 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background-color: var(--dot, #7081D7);
+    background-color: var(--dot, var(--status-default));
 }
 
 .TaskDetails__status--todo {
-    --dot: #94A3B8;
+    --dot: var(--status-todo);
 }
 
 .TaskDetails__status--in_progress {
-    --dot: #F59E0B;
+    --dot: var(--status-progress);
 }
 
 .TaskDetails__status--done {
-    --dot: #10B981;
+    --dot: var(--status-done);
 }
  
 .TaskDetails__title {
@@ -175,8 +175,8 @@
     height: 32px;
     flex-shrink: 0;
     border-radius: 50%;
-    background-color: #1E293B;
-    color: #FFFFFF;
+    background-color: var(--button-dark-bg);
+    color: var(--text-on-accent);
     font-size: 0.75rem;
     font-weight: 600;
 }
@@ -264,7 +264,7 @@
 }
 
 .TaskDetails__subtask:hover {
-    border-color: #A5B4FC;
+    border-color: var(--control-focus);
     background-color: var(--surface-card-hover);
     transform: translateY(-1px);
 }
@@ -287,7 +287,7 @@
     height: 18px;
     margin: 0;
     cursor: pointer;
-    accent-color: #6366f1;
+    accent-color: var(--checkbox-accent);
 }
 
 .TaskDetails__footer {
@@ -328,11 +328,11 @@
 }
 
 .TaskDetails__subtask--error {
-    border-color: #ef4444;
+    border-color: var(--danger);
     background-color: rgba(239, 68, 68, 0.06);
 }
 
 .TaskDetails__subtask--error:hover {
-    border-color: #dc2626;
+    border-color: var(--danger-strong);
     background-color: rgba(239, 68, 68, 0.1);
 }

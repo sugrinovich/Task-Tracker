@@ -1,0 +1,390 @@
+/* ---------- Backdrop ---------- */
+.modalBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: var(--overlay-backdrop);
+    backdrop-filter: blur(3px);
+}
+
+/* ---------- Контейнер ---------- */
+.CreateTaskForm {
+    display: flex;
+    flex-direction: column;
+    width: min(90%, 800px);
+    max-height: 85vh;
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    color: var(--text-primary);
+    background-color: var(--surface-card);
+    box-shadow: var(--modal-shadow);
+}
+
+/* ---------- Шапка ---------- */
+.CreateTaskForm__header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 20px 15px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.CreateTaskForm__heading {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.CreateTaskForm__headingIcon {
+    display: grid;
+    place-items: center;
+    width: 55px;
+    height: 55px;
+    border-radius: 14px;
+    color: var(--accent-strong);
+    background: linear-gradient(145deg, var(--accent-soft-start), var(--accent-soft-end));
+}
+
+.CreateTaskForm__title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.CreateTaskForm__close {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    color: var(--text-secondary);
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.CreateTaskForm__close:hover {
+    color: var(--text-primary);
+    background-color: var(--surface-card-hover);
+}
+
+/* ---------- Прокручиваемое содержимое ---------- */
+.CreateTaskForm__form {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+}
+
+.CreateTaskForm__content {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+    gap: 28px;
+    padding: 15px 20px;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.CreateTaskForm__content::-webkit-scrollbar {
+    display: none;
+}
+
+/* ---------- Поля ---------- */
+.CreateTaskForm__field {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.CreateTaskForm__label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--text-primary);
+}
+
+.CreateTaskForm__control {
+    width: 100%;
+    min-height: 58px;
+    padding: 0 17px;
+    border: 1.5px solid var(--control-border);
+    border-radius: 12px;
+    outline: none;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    background-color: var(--surface-card);
+    box-shadow: var(--control-shadow);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.CreateTaskForm__control::placeholder {
+    color: var(--control-placeholder);
+}
+
+.CreateTaskForm__control:hover {
+    border-color: var(--control-focus);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--checkbox-accent) 10%, transparent);    
+}
+
+.CreateTaskForm__control:focus {
+    border-color: var(--control-focus);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--checkbox-accent) 10%, transparent);
+}
+
+
+.CreateTaskForm__textareaWrap {
+    position: relative;
+}
+
+.CreateTaskForm__textarea {
+    display: block;
+    min-height: 168px;
+    padding: 15px 17px 38px;
+    line-height: 1.5;
+    resize: none;
+}
+
+.CreateTaskForm__counter {
+    position: absolute;
+    right: 15px;
+    bottom: 13px;
+    font-size: 0.9rem;
+    color: var(--control-placeholder);
+    pointer-events: none;
+}
+
+/* ---------- Подзадачи ---------- */
+.CreateTaskForm__subtaskCreator {
+    position: relative;
+}
+
+.CreateTaskForm__subtaskInput {
+    padding-right: 54px;
+}
+
+.CreateTaskForm__subtaskAdd {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    color: var(--accent-strong);
+    background-color: var(--accent-soft-start);
+    transform: translateY(-50%);
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.CreateTaskForm__subtaskAdd:hover {
+    color: var(--text-on-accent);
+    background-color: var(--control-focus);
+}
+
+.CreateTaskForm__subtaskList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.CreateTaskForm__subtask {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 46px;
+    padding: 8px 10px 8px 14px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    background-color: var(--surface-card-hover);
+}
+
+.CreateTaskForm__subtaskText {
+    overflow-wrap: anywhere;
+    color: var(--text-primary);
+}
+
+.CreateTaskForm__subtaskRemove {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    color: var(--text-muted);
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.CreateTaskForm__subtaskRemove:hover {
+    color: var(--danger);
+    background-color: var(--surface-card);
+}
+
+/* ---------- Метка и срок ---------- */
+.CreateTaskForm__options {
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+}
+
+.CreateTaskForm__options > .CreateTaskForm__field {
+    flex: 1;
+    min-width: 0;
+}
+
+.CreateTaskForm__choice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.CreateTaskForm__choice--open {
+    position: relative;
+    z-index: 11;
+    border-color: var(--control-focus);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--checkbox-accent) 10%, transparent);
+}
+
+.CreateTaskForm__categoryPicker {
+    position: relative;
+}
+
+.CreateTaskForm__categoryMenu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    left: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 7px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    background-color: var(--surface-card);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.CreateTaskForm__categoryBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9;
+    background: transparent;
+}
+
+.CreateTaskForm__categoryOption {
+    display: flex;
+    width: 100%;
+    padding: 7px 9px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.CreateTaskForm__categoryOption:hover {
+    background-color: var(--surface-card-hover);
+}
+
+.CreateTaskForm__categoryOption + .CreateTaskForm__categoryOption {
+    border-top: 1px solid var(--border-subtle);
+    border-radius: 0 0 8px 8px;
+}
+
+.CreateTaskForm__tag {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 0.92rem;
+    font-weight: 650;
+}
+
+.CreateTaskForm__tag--design {
+    color: var(--tag-design-fg);
+    background-color: var(--tag-design-bg);
+}
+
+.CreateTaskForm__tag--dev {
+    color: var(--tag-dev-fg);
+    background-color: var(--tag-dev-bg);
+}
+
+.CreateTaskForm__tag--marketing {
+    color: var(--tag-mktg-fg);
+    background-color: var(--tag-mktg-bg);
+}
+
+.CreateTaskForm__categoryPlaceholder {
+    color: var(--text-muted);
+}
+
+.CreateTaskForm__dateTime {
+    display: flex;
+    gap: 10px;
+}
+
+.CreateTaskForm__dateControl {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    color: var(--text-secondary);
+}
+
+.CreateTaskForm__dateControl > svg {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    z-index: 1;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.CreateTaskForm__dateInput {
+    min-width: 0;
+    padding-left: 42px;
+    font-size: 0.95rem;
+}
+
+/* ---------- Нижняя кнопка ---------- */
+.CreateTaskForm__footer {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 20px;
+    border-top: 1px solid var(--border-subtle);
+    background-color: var(--surface-card);
+}
+
+.CreateTaskForm__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: min(100%, 280px);
+    min-height: 44px;
+    padding: 10px 20px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--surface-card);
+    background: var(--btn-primary-gradient);
+    cursor: pointer;
+    transition: filter 0.2s ease;
+}
+
+.CreateTaskForm__button:hover {
+    filter: brightness(0.9);
+}

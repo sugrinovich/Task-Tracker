@@ -21,6 +21,23 @@
   --text-secondary: #64748B;
   --text-muted: #94A3B8;
   --text-on-accent: #FFFFFF;
+  --overlay-backdrop: rgb(0 0 0 / 55%);
+  --modal-shadow: 0 20px 60px rgb(15 23 42 / 25%);
+  --accent-strong: #5B57F4;
+  --accent-soft-start: #EEF0FF;
+  --accent-soft-end: #DCDFFF;
+  --control-border: #DCE5F7;
+  --control-placeholder: #9AA9C6;
+  --control-shadow: 0 1px 4px rgb(63 81 125 / 4%);
+  --danger: #DC2626;
+  --danger-strong: #B91C1C;
+  --status-default: #7081D7;
+  --status-todo: #94A3B8;
+  --status-progress: #F59E0B;
+  --status-done: #10B981;
+  --control-focus: #818CF8;
+  --checkbox-accent: #6366F1;
+  --button-dark-bg: #1E293B;
 
   /* Сайдбар */
   --sidebar-gradient: linear-gradient(180deg, #1B2136 0%, #101424 100%);
@@ -61,6 +78,23 @@
     --text-primary: #F1F5F9;
     --text-secondary: #94A3B8;
     --text-muted: #64748B;
+    --overlay-backdrop: rgb(0 0 0 / 65%);
+    --modal-shadow: 0 20px 60px rgb(0 0 0 / 45%);
+    --accent-strong: #818CF8;
+    --accent-soft-start: #312E81;
+    --accent-soft-end: #3730A3;
+    --control-border: #334155;
+    --control-placeholder: #94A3B8;
+    --control-shadow: 0 1px 4px rgb(0 0 0 / 20%);
+    --danger: #F87171;
+    --danger-strong: #EF4444;
+    --status-default: #818CF8;
+    --status-todo: #94A3B8;
+    --status-progress: #FBBF24;
+    --status-done: #34D399;
+    --control-focus: #A5B4FC;
+    --checkbox-accent: #818CF8;
+    --button-dark-bg: #0F172A;
 
     --sidebar-gradient: linear-gradient(180deg, #131A2E 0%, #090D17 100%);
     --sidebar-active-item: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);

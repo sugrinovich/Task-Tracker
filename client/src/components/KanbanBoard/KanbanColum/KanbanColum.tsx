@@ -1,6 +1,7 @@
 import type { Task, TaskStatus } from "../../../types/task"
 import TaskCard from "../TaskCard/TaskCard";
 import "./KanbanColum.css" 
+import { Link, useLocation } from "react-router-dom";
 
 
 type KanbanColumProps = {
@@ -21,6 +22,7 @@ const STATUS_COLORS: Record<TaskStatus, string> = {
 
 function KanbanColum({ tasks, status }: KanbanColumProps) {
     const tasks_len = tasks.length;
+    const location = useLocation();
 
     return (
         <div className="KanbanColum">
@@ -41,7 +43,13 @@ function KanbanColum({ tasks, status }: KanbanColumProps) {
                         <TaskCard key={task.id} task={task}/>
                     ))
                 }
-                <button className="KanbanColum__btn">+ Добавить задачу</button>
+                <Link
+                    className="KanbanColum__btn"
+                    to="/tasks/new"
+                    state={{ backgroundLocation: location }}
+                >
+                    + Добавить задачу
+                </Link>
             </div>
         </div>
     )

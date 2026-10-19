@@ -6,6 +6,7 @@ import { TasksContext } from "./context/TasksContext";
 import TaskDetails from "./components/TaskForm/TaskDetails";
 import { useLocation } from "react-router-dom";
 import { Route, Routes } from "react-router-dom";
+import CreateTaskForm from "./components/TaskForm/CreateTaskForm";
 
 
 function App() {
@@ -82,11 +83,13 @@ function App() {
       <Routes location={backgroundLocation || location}>
         <Route path="/" element={<KanbanBoard tasks={tasks} />} />
         <Route path="/tasks/:id" element={<KanbanBoard tasks={tasks} />} />
+        <Route path="tasks/new" element={<KanbanBoard tasks={tasks} />} />
       </Routes>
 
       {backgroundLocation && (
         <Routes>
             <Route path="/tasks/:id" element={<TaskDetails />} />
+            <Route path="tasks/new" element={<CreateTaskForm />} />
         </Routes>
       )}
     </TasksContext.Provider>

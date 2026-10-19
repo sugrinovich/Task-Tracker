@@ -113,7 +113,7 @@
 }
 
 .menu__btn--danger {
-    color: #DC2626;
+    color: var(--danger);
 }
 
 .taskCard__body {
@@ -159,6 +159,6 @@
     border-radius: 50%;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #FFFFFF;
-    background-color: #1E293B;
+    color: var(--text-on-accent);
+    background-color: var(--button-dark-bg);
 }
