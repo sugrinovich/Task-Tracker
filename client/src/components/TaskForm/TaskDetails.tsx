@@ -29,6 +29,8 @@ function TaskDetails() {
     const isModal = Boolean(location.state?.backgroundLocation);
 
     if (!task) return <Navigate to="/" replace />;
+
+    const completedSubtasks = task.subtasks.filter(subtask => subtask.completed).length;
     
     const content = (
         <div className="TaskDetails">
@@ -63,11 +65,9 @@ function TaskDetails() {
                 <h3 className="TaskDetails__checklistTitle">
                     <SquareCheck size={18}/>
                     Подзадачи
-                    {task.checklist_progress && (
-                        <span className="TaskDetails__checklistInfo">
-                            ({task.checklist_progress.completed}/{task.checklist_progress.total})
-                        </span>
-                    )}
+                    <span className="TaskDetails__checklistInfo">
+                        ({completedSubtasks}/{task.subtasks.length})
+                    </span>
                 </h3>
                 {/* тут потом будет список подзадач */}
             </section>

@@ -8,10 +8,7 @@ export const tasks: Task[] = [
     title: "Сделать авторизацию на сайте",
     description: null,
     date: "2026-10-12T10:00:00Z",
-    checklist_progress: {
-      total: 4,
-      completed: 2,
-    },
+    subtasks: [],
     user: {
       name: "Алексей Кузнецов",
       avatar: "AK",
@@ -24,10 +21,7 @@ export const tasks: Task[] = [
     title: "API каталога",
     description: "Разработать эндпоинты для фильтрации товаров",
     date: "2026-10-10T12:00:00Z",
-    checklist_progress: {
-      total: 5,
-      completed: 3,
-    },
+    subtasks: [],
     user: {
       name: "Иван Петров",
       avatar: "ИП",
@@ -40,10 +34,7 @@ export const tasks: Task[] = [
     title: "Прототип в Figma",
     description: "Финальный макет мобильного приложения",
     date: "2026-10-09T18:00:00Z",
-    checklist_progress: {
-      total: 4,
-      completed: 4,
-    },
+    subtasks: [],
     user: {
       name: "Алексей Кузнецов",
       avatar: "AK",
@@ -56,10 +47,7 @@ export const tasks: Task[] = [
     title: "Тексты для сторисов",
     description: null,
     date: "2026-10-14T09:00:00Z",
-    checklist_progress: {
-      total: 3,
-      completed: 0,
-    },
+    subtasks: [],
     user: {
       name: "Леонид Васильев",
       avatar: "ЛВ",

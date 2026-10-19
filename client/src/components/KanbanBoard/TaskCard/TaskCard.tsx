@@ -52,6 +52,7 @@ function TaskCard({ task }: TaskCardsProps) {
     const isDone = task.status === "done";
     const currentBtn = BUTTON_CONFIG[task.status];
     const location = useLocation();
+    const completedSubtasks = task.subtasks.filter(subtask => subtask.completed).length;
     
     return (
             <Link className={`taskCard taskCard--${task.category}`}
@@ -138,17 +139,10 @@ function TaskCard({ task }: TaskCardsProps) {
                         <Calendar size={16} />
                         {dateFormatter(task.date)}
                     </p>
-                    {(task.checklist_progress) ? (
-                        <p className="taskCard__progress">
-                            <SquareCheck size={16} />
-                            {task.checklist_progress.completed}/{task.checklist_progress.total}
-                        </p>
-                    ) : (
-                        <p className="taskCard__progress">
-                            <SquareCheck size={16} />
-                            None
-                        </p>   
-                    )}
+                    <p className="taskCard__progress">
+                        <SquareCheck size={16} />
+                        {completedSubtasks}/{task.subtasks.length}
+                    </p>
                     <div className="taskCard__avatar">{task.user.avatar}</div>
                 </div>
             </Link>

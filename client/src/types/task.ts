@@ -1,6 +1,11 @@
 export type TaskCategory = 'design' | 'dev' | 'marketing';
 export type TaskStatus = 'todo' | 'in_progress' | 'done';
 
+export interface Subtask {
+    id: string,
+    title: string,
+    completed: boolean,
+}
 
 export interface Task {
     id: string,
@@ -9,10 +14,7 @@ export interface Task {
     title: string,
     description?: string | null,
     date: string,
-    checklist_progress?: {
-        total: number,
-        completed: number,
-    },
+    subtasks: Subtask[],
     user: {
         name: string,
         avatar: string,

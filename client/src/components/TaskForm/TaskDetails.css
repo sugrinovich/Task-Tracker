@@ -19,14 +19,14 @@
 .modalBackdrop {
     position: fixed;
     inset: 0;
-    z-index: 996;
+    z-index: 99;
 
     display: flex;
     justify-content: center;
     align-items: center;
 
     padding: 24px;
-    overflow-y: auto;
+    /* overflow-y: auto; */
     background: rgb(0 0 0 / 55%);
 }
 
