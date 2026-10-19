@@ -150,8 +150,6 @@
     font-weight: 600;
     line-height: 1.4;
     color: var(--text-primary);
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
 }
 
 .taskCard__footer {

@@ -75,7 +75,9 @@ function TaskDetails() {
             </button>
 
             <div className="TaskDetails__header">
-                <h2 className="TaskDetails__title">{task.title}</h2>
+                <h2 className="TaskDetails__title">
+                    {task.title.length > 30 ? `${task.title.slice(0, 30)}...` : task.title}
+                </h2>
                 <span className={`TaskDetails__status TaskDetails__status--${task.status}`}>
                     {COLUM_STATUS[task.status]}
                 </span>

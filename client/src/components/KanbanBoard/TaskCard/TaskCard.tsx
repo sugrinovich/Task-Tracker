@@ -95,7 +95,9 @@ function TaskCard({ task }: TaskCardsProps) {
                 </div>
 
                 <div className="taskCard__body">
-                    <h3 className="taskCard__title">{task.title}</h3>
+                    <h3 className="taskCard__title">
+                        {task.title.length > 30 ? `${task.title.slice(0, 30)}...` : task.title}
+                    </h3>
                 </div>
 
                 <div className="taskCard__footer">
