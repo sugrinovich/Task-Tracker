@@ -1,6 +1,13 @@
 .KanbanBoard {
     display: grid;
-    grid-template-columns: repeat(3, minmax(auto, 1fr));
-    gap: 10px;
-    margin-top: 20px;
+    grid-template-columns: repeat(3, minmax(280px, 1fr));
+    gap: 18px;
+    margin-top: 24px;
+    padding: 2px 2px 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.KanbanBoard::-webkit-scrollbar {
+    display: none;
 }

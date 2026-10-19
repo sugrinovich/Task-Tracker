@@ -34,12 +34,29 @@ function App() {
         setTasks(originalTasks)
       }) 
   }
-  function handleChange(id: string, status: TaskStatus) {
+  function handleChangeTaskStatus(id: string, status: TaskStatus) {
     const originalTasks = [...tasks];
 
     setTasks(prev => prev.map(task => 
       task.id === id ? { ...task, status: status} : task
     ));
+
+    getTasks()
+      .then(setTasks)
+      .catch((e) => {
+        setError(e.message),
+        setTasks(originalTasks)
+      }) 
+  }
+
+  function handleChangeSubtaskStatus(taskId: string, subtaskId: string, completed: boolean) {
+    const originalTasks = [...tasks];
+
+    setTasks(tasks => tasks.map(
+      task => task.id !== taskId ? task : {
+        ...task, subtasks: task.subtasks.map(sub => sub.id !== subtaskId ? sub : {...sub, completed})
+      }
+    ))
 
     getTasks()
       .then(setTasks)
@@ -59,7 +76,9 @@ function App() {
 
 
   return  (
-    <TasksContext.Provider value={{ tasks: tasks, onDelete: handleDelete, onStatusChage: handleChange }}> 
+    <TasksContext.Provider value={{ tasks: tasks, onTaskDelete: handleDelete, 
+                                    onTaskChage: handleChangeTaskStatus, onSubtaskChange: handleChangeSubtaskStatus}}
+      > 
       <Routes location={backgroundLocation || location}>
         <Route path="/" element={<KanbanBoard tasks={tasks} />} />
         <Route path="/tasks/:id" element={<KanbanBoard tasks={tasks} />} />

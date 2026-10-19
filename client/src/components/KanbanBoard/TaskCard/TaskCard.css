@@ -1,113 +1,121 @@
-/* ---------- Карточка ---------- */
 .taskCard {
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
     padding: 16px;
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid transparent;
+    border-radius: 14px;
     background-color: var(--surface-card);
-    border-radius: 12px;
-    border-left: 5px solid transparent;
     box-shadow: var(--shadow-card);
-    transition: background-color 0.15s ease, box-shadow 0.15s ease;
     cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .taskCard:hover {
-    background-color: var(--surface-card-hover);
+    transform: translateY(-2px);
     box-shadow: var(--shadow-card-hover);
 }
 
-.taskCard--design    { border-left-color: var(--tag-design-fg); }
-.taskCard--dev       { border-left-color: var(--tag-dev-fg); }
+.taskCard--design { border-left-color: var(--tag-design-fg); }
+.taskCard--dev { border-left-color: var(--tag-dev-fg); }
 .taskCard--marketing { border-left-color: var(--tag-mktg-fg); }
 
-
-/* ---------- Шапка ---------- */
 .taskCard__header {
     display: flex;
     align-items: center;
 }
 
 .taskCard__tag {
-    padding: 6px 12px;
-    border-radius: 20px;
+    padding: 5px 10px;
+    border-radius: 999px;
     font-size: 0.9rem;
     font-weight: 500;
     line-height: 1.2;
 }
 
 .taskCard__tag--design {
-    background-color: var(--tag-design-bg);
     color: var(--tag-design-fg);
+    background-color: var(--tag-design-bg);
 }
 
 .taskCard__tag--dev {
-    background-color: var(--tag-dev-bg);
     color: var(--tag-dev-fg);
+    background-color: var(--tag-dev-bg);
 }
 
 .taskCard__tag--marketing {
-    background-color: var(--tag-mktg-bg);
     color: var(--tag-mktg-fg);
+    background-color: var(--tag-mktg-bg);
 }
+
+.menuWrap {
+    position: relative;
+    margin-left: auto;
+}
+
 .taskCard__menu {
-    padding: 4px 4px;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
     color: var(--text-muted);
     transition: color 0.15s ease, background-color 0.15s ease;
-    border-radius: 10px;
 }
 
 .taskCard__menu:hover {
     color: var(--text-primary);
-    background-color: #F1F3F7;
+    background-color: var(--surface-card-hover);
 }
-.menuWrap { 
-    position: relative;
-    margin-left: auto; 
-}
+
 .menuBackdrop {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: transparent; 
+    inset: 0;
     z-index: 999;
+    background: transparent;
 }
+
 .menu {
     position: absolute;
-    top: 0;
-    right: 100%;
-    margin-right: 18px;
+    top: 34px;
+    right: 0;
+    z-index: 1000;
     display: flex;
     flex-direction: column;
-
-    min-width: 140px;
-    padding: 8px;
+    min-width: 150px;
+    padding: 6px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
     font-size: 18px;
     background-color: var(--surface-card);
-    border-radius: 10px;
     box-shadow: var(--shadow-card-hover);
 }
+
 .line {
-    color: var(--text-muted);
-    opacity: 20%;
+    height: 1px;
+    margin: 3px 6px;
+    border: 0;
+    background-color: var(--border-subtle);
 }
+
 .menu__btn {
-    display: block;
-    padding: 4px 0px;
-    border-radius: 10px;
     z-index: 1000;
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    text-align: left;
 }
+
 .menu__btn:hover {
     background-color: var(--surface-card-hover);
 }
-.menu__btn--done {
-    background-color: var(--surface-card-hover);  
+
+.menu__btn--danger {
+    color: #DC2626;
 }
 
-
-/* ---------- Тело ---------- */
 .taskCard__body {
     display: flex;
     flex-direction: column;
@@ -115,49 +123,42 @@
 }
 
 .taskCard__title {
+    display: -webkit-box;
+    overflow: hidden;
     font-size: 1.1rem;
     font-weight: 600;
-    line-height: 1.3;
+    line-height: 1.4;
     color: var(--text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }
 
-/* .taskCard__description {
-    font-size: 0.95rem;
-    hyphens: auto;
-    color: var(--text-secondary);
-} */
-
-
-/* ---------- Футер ---------- */
 .taskCard__footer {
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 10px;
+    padding-top: 2px;
 }
 
 .taskCard__date,
 .taskCard__progress {
-    font-size: 1rem;
-    color: var(--text-secondary);
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
+    font-size: 1rem;
+    color: var(--text-secondary);
 }
 
 .taskCard__avatar {
-    margin-left: auto;
-    width: 34px;
-    height: 34px;
     flex-shrink: 0;
     display: grid;
     place-items: center;
+    width: 32px;
+    height: 32px;
+    margin-left: auto;
     border-radius: 50%;
-    background-color: #1E293B;
-    color: #FFFFFF;
     font-size: 0.75rem;
     font-weight: 600;
+    color: #FFFFFF;
+    background-color: #1E293B;
 }
-

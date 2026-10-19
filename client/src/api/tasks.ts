@@ -1,4 +1,4 @@
-import type { Task } from "../types/task";
+import type { Task, Subtask } from "../types/task";
 
 
 export async function getTasks(): Promise<Task[]> {
@@ -30,6 +30,21 @@ export async function changeStatusTask(id: string, status: string): Promise<Task
 
     if (!res.ok) {
         throw new Error(`Ошибка изменения статуса задачи: ${res.status}`);
+    }
+
+    return res.json();
+}
+
+
+export async function changeStatusSubtask(taskID: string, subtaskId: string, completed: boolean): Promise<Subtask> {
+    const res = await fetch(`/api/tasks/${taskID}/subtasks/${subtaskId}`,
+                            {method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ completed })
+    });
+
+    if (!res.ok) {
+        throw new Error(`Ошибка изменения статуса подзадачи: ${res.status}`);
     }
 
     return res.json();

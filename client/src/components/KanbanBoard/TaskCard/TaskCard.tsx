@@ -1,10 +1,10 @@
-import type { Task, TaskStatus } from "../../../types/task";
+import type { Task } from "../../../types/task";
 import { Calendar, SquareCheck, EllipsisVertical} from "lucide-react";
 import { dateFormatter } from "../../../utils/dateFormatter";
 import "./TaskCard.css"
 import { useState, useContext } from "react";
 import { TasksContext } from "../../../context/TasksContext";
-import { deleteTask, changeStatusTask } from "../../../api/tasks";
+import { deleteTask } from "../../../api/tasks";
 import { useLocation, Link } from "react-router-dom";
 
 
@@ -16,13 +16,6 @@ const CATEGORY_LABELS = {
     dev: "Разработка",
     marketing: "Маркетинг",
 };
-const BUTTON_CONFIG = {
-    todo: { text: "Приступить", nextStatus: "in_progress" as TaskStatus },
-    in_progress: { text: "Закончить", nextStatus: "done" as TaskStatus },
-    done: { text: "Выполнено", nextStatus: "done" as TaskStatus }
-};
-
-
 function TaskCard({ task }: TaskCardsProps) {
     const [openMenu, setOpenMenu] = useState(false);
     const ctx = useContext(TasksContext)
@@ -30,7 +23,7 @@ function TaskCard({ task }: TaskCardsProps) {
     async function handleClickDelete() {
         try {
             await deleteTask(task.id);
-            ctx?.onDelete(task.id);
+            ctx?.onTaskDelete(task.id);
         } catch(e) {
             console.error(e)
         } finally {
@@ -38,19 +31,6 @@ function TaskCard({ task }: TaskCardsProps) {
         }
     }
 
-    async function handleClickChange(status: TaskStatus) {
-        try {
-            await changeStatusTask(task.id, status)
-            ctx?.onStatusChage(task.id, status)
-        } catch(e) {
-            console.error(e)
-        } finally {
-            setOpenMenu(false);
-        }
-    }
-
-    const isDone = task.status === "done";
-    const currentBtn = BUTTON_CONFIG[task.status];
     const location = useLocation();
     const completedSubtasks = task.subtasks.filter(subtask => subtask.completed).length;
     
@@ -81,19 +61,6 @@ function TaskCard({ task }: TaskCardsProps) {
                                     e.preventDefault();
                                 }}/>
                                 <div className="menu">
-                                    <button 
-                                        className={`menu__btn ${isDone ? "menu__btn--done" : ""}`}
-                                        type="button" 
-                                        disabled={isDone}
-                                        onClick={(e) => {
-                                            handleClickChange(currentBtn.nextStatus)
-                                            e.stopPropagation();
-                                            e.preventDefault();
-                                        }}
-                                    >
-                                        {currentBtn.text}
-                                    </button>
-                                    <hr className="line"/>
                                     <button className="menu__btn" type="button"
                                         onClick={(e) => {setOpenMenu(false)
                                             e.stopPropagation();
@@ -112,7 +79,7 @@ function TaskCard({ task }: TaskCardsProps) {
                                         Редактировать
                                     </button>
                                     <hr className="line"/>
-                                    <button className="menu__btn" type="button"
+                                    <button className="menu__btn menu__btn--danger" type="button"
                                         onClick={(e) => {handleClickDelete()
                                             e.stopPropagation();
                                             e.preventDefault();
@@ -129,9 +96,6 @@ function TaskCard({ task }: TaskCardsProps) {
 
                 <div className="taskCard__body">
                     <h3 className="taskCard__title">{task.title}</h3>
-                    {/* {task.description && (
-                        <p className="taskCard__description">{task.description}</p>
-                    )} */}
                 </div>
 
                 <div className="taskCard__footer">

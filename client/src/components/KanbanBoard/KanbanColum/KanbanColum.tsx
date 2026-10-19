@@ -33,6 +33,9 @@ function KanbanColum({ tasks, status }: KanbanColumProps) {
                 <p className="KanbanColum__total">{tasks_len}</p>
             </div>
             <div className="KanbanColum__body">
+                {tasks.length === 0 && (
+                    <p className="KanbanColum__empty">Задач пока нет</p>
+                )}
                 {
                     tasks.map(task => (
                         <TaskCard key={task.id} task={task}/>

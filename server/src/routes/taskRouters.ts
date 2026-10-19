@@ -82,6 +82,31 @@ taskRouter.patch("/:id", (req: Request, res: Response) => {
 })
 
 
+taskRouter.patch("/:taskId/subtasks/:subtaskId", (req: Request, res: Response) => {
+    const task = tasks.find(t => t.id === req.params.taskId);
 
+    if (!task) {
+        res.status(404).json({ message: "Task not found" });
+        return;
+    }
+
+    const subtask = task.subtasks.find(el => el.id === req.params.subtaskId)
+
+    if (!subtask) {
+        res.status(404).json({ message: "Subtask not found" });
+        return;
+    }
+
+    const { completed } = req.body ?? {};
+
+    if (typeof completed !== "boolean") {
+        res.status(400).json({ message: "Invalid completed value" });
+        return;
+    }
+
+    subtask.completed = completed;
+
+    res.json(subtask);
+})
 
 export default taskRouter;

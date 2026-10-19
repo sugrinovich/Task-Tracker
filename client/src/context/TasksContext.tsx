@@ -3,8 +3,9 @@ import type { TaskStatus, Task } from "../types/task";
 
 type TasksContextType = {
     tasks: Task[];
-    onDelete: (id: string) => void,
-    onStatusChage: (id: string, status: TaskStatus) => void;
+    onTaskDelete: (id: string) => void,
+    onTaskChage: (id: string, status: TaskStatus) => void;
+    onSubtaskChange: (taskId: string, subtaskId: string, completed: boolean) => void;
 };
 
 export const TasksContext = createContext<TasksContextType | null>(null);
