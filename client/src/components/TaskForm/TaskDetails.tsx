@@ -1,7 +1,8 @@
 import "./TaskDetails.css"
 import type { TaskStatus } from "../../types/task";
-import { Calendar, SquareCheck, FileText, X } from "lucide-react";
-import { dateTimeFormatter } from "../../utils/dateTimeFormatter";
+import { Calendar, Clock3, SquareCheck, FileText, X } from "lucide-react";
+import { datePartFormatter, timePartFormatter } from "../../utils/dateTimeFormatter";
+import { isOverdueDate } from "../../utils/dateFormatter";
 import { useParams, useNavigate, useLocation, Navigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { TasksContext } from "../../context/TasksContext";
@@ -85,9 +86,20 @@ function TaskDetails() {
                     <span className={`TaskDetails__tag TaskDetails__tag--${task.category}`}>
                         {CATEGORY_LABELS[task.category]}
                     </span>
-                    <p className="TaskDetails__date">
-                        <Calendar size={18}/>
-                        {dateTimeFormatter(task.date)}
+                    <p className={`TaskDetails__date ${task.status === "done"
+                        ? "TaskDetails__date--completed"
+                        : isOverdueDate(task.date)
+                            ? "TaskDetails__date--overdue"
+                            : ""}
+                    `}>
+                        <span className="TaskDetails__datePart">
+                            <Calendar size={18}/>
+                            {datePartFormatter(task.date)}
+                        </span>
+                        <span className="TaskDetails__datePart">
+                            <Clock3 size={18}/>
+                            {timePartFormatter(task.date)}
+                        </span>
                     </p>
                     <div className="TaskDetails__avatar">
                         <span className="TaskDetails__initials">{task.user.avatar}</span>

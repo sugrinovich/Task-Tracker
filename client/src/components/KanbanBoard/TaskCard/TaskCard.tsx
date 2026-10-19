@@ -1,6 +1,6 @@
 import type { Task } from "../../../types/task";
 import { Calendar, SquareCheck, EllipsisVertical} from "lucide-react";
-import { dateFormatter } from "../../../utils/dateFormatter";
+import { dateFormatter, isOverdueDate } from "../../../utils/dateFormatter";
 import "./TaskCard.css"
 import { useState, useContext } from "react";
 import { TasksContext } from "../../../context/TasksContext";
@@ -100,8 +100,15 @@ function TaskCard({ task }: TaskCardsProps) {
 
                 <div className="taskCard__footer">
                     <p className="taskCard__date">
+                        <span className={task.status === "done"
+                            ? "taskCard__date--completed"
+                            : isOverdueDate(task.date)
+                                ? "taskCard__date--overdue"
+                                : "taskCard__date--default"}
+                        >
                         <Calendar size={16} />
                         {dateFormatter(task.date)}
+                        </span>
                     </p>
                     <p className="taskCard__progress">
                         <SquareCheck size={16} />

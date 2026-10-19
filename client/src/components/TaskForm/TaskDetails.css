@@ -152,6 +152,20 @@
     font-size: 1.1rem;
     color: var(--text-secondary);
 }
+
+.TaskDetails__date--overdue {
+    color: var(--danger);
+}
+
+.TaskDetails__date--completed {
+    color: var(--status-done);
+}
+
+.TaskDetails__datePart {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
  
 .TaskDetails__avatar {
     display: flex;

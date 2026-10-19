@@ -1,21 +1,20 @@
 const MONTHS = ["янв", "фев", "мар", "апр", "мая", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"];
 
-
-export function dateTimeFormatter(str: string, now: Date = new Date()) {
+export function datePartFormatter(str: string): string {
     const date = new Date(str);
+    if (Number.isNaN(date.getTime())) return "Дата не указана";
 
-    const day = date.getDate();
-    const month = date.getMonth();
-    const year = date.getFullYear();
+    return `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+}
 
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
+export function timePartFormatter(str: string): string {
+    const date = new Date(str);
+    if (Number.isNaN(date.getTime())) return "--:--";
 
-    const now_day = now.getDate();
-    const now_month = now.getMonth();
-    const now_year = now.getFullYear();
+    return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+}
 
-    if (day === now_day && month === now_month && year === now_year) return `Сегодня ${hours}:${minutes}`
 
-    else return `${day} ${MONTHS[month]} ${hours}:${minutes}`
+export function dateTimeFormatter(str: string): string {
+    return `${datePartFormatter(str)}, ${timePartFormatter(str)}`;
 }

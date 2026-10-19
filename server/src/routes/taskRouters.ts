@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { tasks } from "../data/mockTasks";
-import { TaskStatus } from "../types/task";
+import { Task, TaskCategory, TaskStatus, Subtask } from "../types/task";
 
 
 const taskRouter = Router();
@@ -79,6 +79,63 @@ taskRouter.patch("/:id", (req: Request, res: Response) => {
     task.status = status as TaskStatus;
 
     res.json(task);
+})
+
+
+taskRouter.post("/", (req: Request, res: Response) => {
+    const { title, description, category, status, date, subtasks, user } = req.body ?? {};
+
+    if (typeof title !== "string" || !title.trim()) {
+        res.status(400).json({ message: "Title is required" });
+        return;
+    }
+
+    if (typeof category !== "string" || !CATEGORIES.includes(category)) {
+        res.status(400).json({ message: "Invalid category" });
+        return;
+    }
+
+    const taskStatus = status ?? "todo";
+    if (typeof taskStatus !== "string" || !STATUSES.includes(taskStatus)) {
+        res.status(400).json({ message: "Invalid status" });
+        return;
+    }
+
+    if (date !== undefined && typeof date !== "string") {
+        res.status(400).json({ message: "Invalid date" });
+        return;
+    }
+
+    if (subtasks !== undefined && !Array.isArray(subtasks)) {
+        res.status(400).json({ message: "Invalid subtasks" });
+        return;
+    }
+
+    const normalizedSubtasks: Subtask[] = (subtasks ?? []).map((subtask: unknown, index: number) => {
+        const subtaskTitle = typeof subtask === "string"
+            ? subtask
+            : (subtask as { title?: unknown })?.title;
+
+        return {
+            id: `subtask-${Date.now()}-${index}`,
+            title: typeof subtaskTitle === "string" ? subtaskTitle.trim() : "",
+            completed: false,
+        };
+    }).filter((subtask: Task["subtasks"][number]) => subtask.title.length > 0);
+
+    const newTask = {
+        id: `task-${Date.now()}`,
+        title: title.trim(),
+        description: typeof description === "string" ? description.trim() : "",
+        category: category as TaskCategory,
+        status: taskStatus as TaskStatus,
+        date: typeof date === "string" ? date : "",
+        subtasks: normalizedSubtasks,
+        user: user ?? { name: "", avatar: "AK" },
+    };
+
+    tasks.push(newTask);
+    res.status(201).json(newTask);
 })
 
 

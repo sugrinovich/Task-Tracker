@@ -35,6 +35,7 @@ function App() {
         setTasks(originalTasks)
       }) 
   }
+
   function handleChangeTaskStatus(id: string, status: TaskStatus) {
     const originalTasks = [...tasks];
 
@@ -67,6 +68,14 @@ function App() {
       }) 
   }
 
+  function handleAddTask() {
+    getTasks()
+      .then(setTasks)
+      .catch((e) => {
+        setError(e.message)
+      }) 
+  }
+
   if (loading) {
     return <div className="statusMessage">Загрузка...</div>;
   }
@@ -78,7 +87,8 @@ function App() {
 
   return  (
     <TasksContext.Provider value={{ tasks: tasks, onTaskDelete: handleDelete, 
-                                    onTaskChage: handleChangeTaskStatus, onSubtaskChange: handleChangeSubtaskStatus}}
+                                    onTaskChage: handleChangeTaskStatus, onSubtaskChange: handleChangeSubtaskStatus,
+                                    onAddTask: handleAddTask}}
       > 
       <Routes location={backgroundLocation || location}>
         <Route path="/" element={<KanbanBoard tasks={tasks} />} />

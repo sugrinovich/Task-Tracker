@@ -50,6 +50,27 @@
     background-color: var(--tag-mktg-bg);
 }
 
+.taskCard__date--overdue {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--danger);
+}
+
+.taskCard__date--completed {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--status-done);
+}
+
+.taskCard__date--default {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text-secondary);
+}
+
 .menuWrap {
     position: relative;
     margin-left: auto;

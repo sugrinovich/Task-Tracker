@@ -1,9 +1,11 @@
 import { CalendarDays, ChevronDown, Clock3, Plus, Sparkles, X } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import type { TaskCategory } from "../../types/task";
-import { formatDateInput, formatTimeInput } from "../../utils/dateInputFormatter";
+import { useContext, useState } from "react";
+import type { TaskCategory, TaskStatus } from "../../types/task";
+import { formatDateInput, formatTimeInput, isValidDateInput, isValidTimeInput } from "../../utils/dateInputFormatter";
 import "./CreateTaskForm.css";
+import { createNewTask } from "../../api/tasks";
+import { TasksContext } from "../../context/TasksContext";
 
 
 const CATEGORY_OPTIONS: { value: TaskCategory; label: string }[] = [
@@ -12,10 +14,17 @@ const CATEGORY_OPTIONS: { value: TaskCategory; label: string }[] = [
     { value: "marketing", label: "Маркетинг" },
 ];
 
+const STATUS_LABELS: Record<TaskStatus, string> = {
+    todo: "К выполнению",
+    in_progress: "В работе",
+    done: "Готово",
+};
+
 function CreateTaskForm() {
     const location = useLocation();
     const isModal = Boolean(location.state?.backgroundLocation);
     const navigate = useNavigate(); 
+    const createStatus = (location.state?.createStatus as TaskStatus | undefined) ?? "todo";
 
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("");
@@ -24,10 +33,20 @@ function CreateTaskForm() {
     const [time, setTime] = useState("");
     const [subtaskTitle, setSubtaskTitle] = useState("");
     const [subtasks, setSubtasks] = useState<string[]>([]);
+    const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
 
     const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
     const descLen = description.length;
     const selectedCategory = CATEGORY_OPTIONS.find(option => option.value === category);
+
+    const clearFieldValidation = (field: string) => {
+        setInvalidFields(previous => {
+            if (!previous.has(field)) return previous;
+            const updated = new Set(previous);
+            updated.delete(field);
+            return updated;
+        });
+    };
 
     const addSubtask = () => {
         const nextSubtask = subtaskTitle.trim();
@@ -36,6 +55,8 @@ function CreateTaskForm() {
         setSubtasks(previous => [...previous, nextSubtask]);
         setSubtaskTitle("");
     };
+
+    const ctx = useContext(TasksContext);
 
     const content = (
 
@@ -47,6 +68,10 @@ function CreateTaskForm() {
                     </span>
                     <h2 className="CreateTaskForm__title">Новая задача</h2>
                 </div>
+
+                <span className={`CreateTaskForm__status CreateTaskForm__status--${createStatus}`}>
+                    {STATUS_LABELS[createStatus]}
+                </span>
 
                 <button
                     className="CreateTaskForm__close"
@@ -65,9 +90,10 @@ function CreateTaskForm() {
                             <span className="CreateTaskForm__label">Метка</span>
                             <div className="CreateTaskForm__categoryPicker">
                                 <button
-                                    className={`CreateTaskForm__control CreateTaskForm__choice ${categoryMenuOpen ? "CreateTaskForm__choice--open" : ""}`}
+                                    className={`CreateTaskForm__control CreateTaskForm__choice ${categoryMenuOpen ? "CreateTaskForm__choice--open" : ""} ${invalidFields.has("category") ? "CreateTaskForm__control--invalid" : ""}`}
                                     type="button"
                                     aria-expanded={categoryMenuOpen}
+                                    onMouseEnter={() => clearFieldValidation("category")}
                                     onClick={() => setCategoryMenuOpen(open => !open)}
                                 >
                                     {selectedCategory ? (
@@ -116,26 +142,28 @@ function CreateTaskForm() {
                                 <span className="CreateTaskForm__dateControl">
                                     <CalendarDays size={18} />
                                     <input
-                                        className="CreateTaskForm__control CreateTaskForm__dateInput"
+                                        className={`CreateTaskForm__control CreateTaskForm__dateInput ${invalidFields.has("date") ? "CreateTaskForm__control--invalid" : ""}`}
                                         type="text"
                                         inputMode="numeric"
                                         name="date"
                                         placeholder="ДД.ММ.ГГГГ"
                                         maxLength={10}
                                         value={date}
+                                        onMouseEnter={() => clearFieldValidation("date")}
                                         onChange={(event) => setDate(formatDateInput(event.target.value))}
                                     />
                                 </span>
                                 <span className="CreateTaskForm__dateControl">
                                     <Clock3 size={18} />
                                     <input
-                                        className="CreateTaskForm__control CreateTaskForm__dateInput"
+                                        className={`CreateTaskForm__control CreateTaskForm__dateInput ${invalidFields.has("time") ? "CreateTaskForm__control--invalid" : ""}`}
                                         type="text"
                                         inputMode="numeric"
                                         name="time"
                                         placeholder="ЧЧ:ММ"
                                         maxLength={5}
                                         value={time}
+                                        onMouseEnter={() => clearFieldValidation("time")}
                                         onChange={(event) => setTime(formatTimeInput(event.target.value))}
                                     />
                                 </span>
@@ -148,11 +176,12 @@ function CreateTaskForm() {
                             Название 
                         </span>
                         <input
-                            className="CreateTaskForm__control"
+                            className={`CreateTaskForm__control ${invalidFields.has("title") ? "CreateTaskForm__control--invalid" : ""}`}
                             type="text"
                             name="title"
                             placeholder="Введите название"
                             value={title}
+                            onMouseEnter={() => clearFieldValidation("title")}
                             onChange={(event) => setTitle(event.target.value)}
                         />
                     </label>
@@ -223,6 +252,31 @@ function CreateTaskForm() {
                     <button
                         className="CreateTaskForm__button"
                         type="button"
+                        onClick={async () => {
+                            const nextInvalidFields = new Set<string>();
+                            if (!title.trim()) nextInvalidFields.add("title");
+                            if (!category) nextInvalidFields.add("category");
+                            if (!isValidDateInput(date)) nextInvalidFields.add("date");
+                            if (!isValidTimeInput(time)) nextInvalidFields.add("time");
+                            setInvalidFields(nextInvalidFields);
+
+                            if (nextInvalidFields.size > 0 || !category) {
+                                return;
+                            }
+                            const dateTime =
+                                date && time
+                                    ? `${date.split(".").reverse().join("-")}T${time}`
+                                    : "";
+
+                            try {
+                                await createNewTask(title, description, category, createStatus, dateTime, subtasks);
+                                ctx?.onAddTask();
+                                navigate(isModal ? -1 : "/" as any)
+                            }
+                            catch(error) {
+                                console.error(error)
+                            }
+                        }}
                     >
                         <Plus size={25} />
                         Создать задачу

@@ -46,7 +46,7 @@ function KanbanColum({ tasks, status }: KanbanColumProps) {
                 <Link
                     className="KanbanColum__btn"
                     to="/tasks/new"
-                    state={{ backgroundLocation: location }}
+                    state={{ backgroundLocation: location, createStatus: status }}
                 >
                     + Добавить задачу
                 </Link>
