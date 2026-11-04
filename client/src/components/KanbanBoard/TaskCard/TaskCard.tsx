@@ -5,7 +5,7 @@ import { Calendar, SquareCheck, EllipsisVertical } from "lucide-react";
 import type { Task } from "../../../types/task";
 import { deleteTask } from "../../../api/tasks";
 import { TasksContext } from "../../../context/TasksContext";
-import { dateFormatter, isOverdueDate } from "../../../utils/dateFormatter";
+import { dateFormatter } from "../../../utils/dateFormatter";
 
 import "./TaskCard.css";
 
@@ -32,12 +32,6 @@ function TaskCard({ task }: TaskCardProps) {
     const [openMenu, setOpenMenu] = useState(false);
 
     const completedSubtasks = task.subtasks.filter(subtask => subtask.completed).length;
-
-    const dateClassName = task.status === "done"
-        ? "taskCard__date--completed"
-        : isOverdueDate(task.date)
-            ? "taskCard__date--overdue"
-            : "taskCard__date--default";
 
     async function handleClickDelete() {
         try {
@@ -128,10 +122,8 @@ function TaskCard({ task }: TaskCardProps) {
 
             <div className="taskCard__footer">
                 <p className="taskCard__date">
-                    <span className={dateClassName}>
-                        <Calendar size={16} />
-                        {dateFormatter(task.date)}
-                    </span>
+                    <Calendar size={16} />
+                    {dateFormatter(task.date)}
                 </p>
                 <p className="taskCard__progress">
                     <SquareCheck size={16} />

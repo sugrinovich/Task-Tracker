@@ -16,10 +16,3 @@ export function dateFormatter(str: string, now: Date = new Date()) {
 
     return `${day} ${MONTHS[month]}`;
 }
-
-export function isOverdueDate(str: string, now: Date = new Date()): boolean {
-    const date = new Date(str);
-    if (Number.isNaN(date.getTime())) return false;
-
-    return date < now;
-}

@@ -6,7 +6,6 @@ import { changeStatusSubtask, changeStatusTask } from "../../api/tasks";
 import { TasksContext } from "../../context/TasksContext";
 import { useCloseModal } from "../../hooks/useCloseModal";
 import { datePartFormatter, timePartFormatter } from "../../utils/dateTimeFormatter";
-import { isOverdueDate } from "../../utils/dateFormatter";
 
 import "./TaskDetails.css";
 
@@ -49,12 +48,6 @@ function TaskDetails({ taskId }: TaskDetailsProps) {
     const completedSubtasks = task.subtasks.filter(subtask => subtask.completed).length;
     const isDone = task.status === "done";
     const currentBtn = BUTTON_CONFIG[task.status];
-
-    const dateClassName = task.status === "done"
-        ? "TaskDetails__date--completed"
-        : isOverdueDate(task.date)
-            ? "TaskDetails__date--overdue"
-            : "";
 
     const clearSubtaskHighlight = (subtaskId: string) => {
         setHighlightedSubtasks(previous => {
@@ -126,7 +119,7 @@ function TaskDetails({ taskId }: TaskDetailsProps) {
                             {CATEGORY_LABELS[task.category]}
                         </span>
 
-                        <p className={`TaskDetails__date ${dateClassName}`}>
+                        <p className="TaskDetails__date">
                             <span className="TaskDetails__datePart">
                                 <Calendar size={18} />
                                 {datePartFormatter(task.date)}

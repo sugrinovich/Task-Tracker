@@ -153,14 +153,6 @@
     color: var(--text-secondary);
 }
 
-.TaskDetails__date--overdue {
-    color: var(--danger);
-}
-
-.TaskDetails__date--completed {
-    color: var(--status-done);
-}
-
 .TaskDetails__datePart {
     display: inline-flex;
     align-items: center;
