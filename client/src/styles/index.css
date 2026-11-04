@@ -1,7 +1,9 @@
 /* ==========================================================================
    Task Tracker — глобальные стили
-   1. Цвета темы (светлая в :root, тёмная в @media (prefers-color-scheme: dark))
-   2. Reset
+   1. Токены темы: светлая в :root, тёмная — в @media ниже
+      (условие сейчас prefers-color-scheme: light — специально, для разработки)
+   2. Reset и база
+   3. Общие элементы: кнопки, статусы, бейджи, модалка
    ========================================================================== */
 
 
@@ -10,109 +12,93 @@
   color-scheme: light;
 
   /* Фоны и поверхности */
-  --bg-main: #F8FAFC;
-  --surface-column: #EDF0F7;
+  --bg-main: #F5F5F3;
+  --surface-column: #EBEBE8;
   --surface-card: #FFFFFF;
-  --surface-card-hover: #F5F5F5;
-  --border-subtle: #DFE5F4;
+  --surface-card-hover: #F7F7F5;
+  --surface-sunken: #F2F2EF;
+  --border-subtle: #E2E2DE;
+  --border-strong: #CFCFCA;
 
   /* Текст */
-  --text-primary: #0F172A;
-  --text-secondary: #64748B;
-  --text-muted: #94A3B8;
+  --text-primary: #1B1B1B;
+  --text-secondary: #5F5F5F;
+  --text-muted: #9A9A96;
   --text-on-accent: #FFFFFF;
-  --overlay-backdrop: rgb(0 0 0 / 55%);
-  --modal-shadow: 0 20px 60px rgb(15 23 42 / 25%);
-  --accent-strong: #5B57F4;
-  --accent-soft-start: #EEF0FF;
-  --accent-soft-end: #DCDFFF;
-  --control-border: #DCE5F7;
-  --control-placeholder: #9AA9C6;
-  --control-shadow: 0 1px 4px rgb(63 81 125 / 4%);
-  --danger: #DC2626;
-  --danger-strong: #B91C1C;
-  --status-default: #7081D7;
-  --status-todo: #94A3B8;
-  --status-progress: #F59E0B;
-  --status-done: #10B981;
-  --control-focus: #818CF8;
-  --checkbox-accent: #6366F1;
-  --button-dark-bg: #1E293B;
 
-  /* Сайдбар */
-  --sidebar-gradient: linear-gradient(180deg, #1B2136 0%, #101424 100%);
-  --sidebar-active-item: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+  /* Акцент */
+  --accent: #5B4FD6;
+  --accent-hover: #4B3FC4;
+  --accent-soft: #EEECFD;
+  --accent-text: #5B4FD6;
+  --focus-ring: rgb(91 79 214 / 35%);
 
-  /* Кнопки */
-  --btn-primary-gradient: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
-  --btn-primary-hover: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  /* Состояния */
+  --danger: #C2382B;
+  --danger-soft: #FDECEA;
+  --danger-border: #EFB1AA;
+  --success: #4F8A2B;
 
-  /* Бейджи категорий */
-  --tag-design-bg: #e1e8ff;
-  --tag-design-fg: #4F46E5;
-  --tag-dev-bg: #FFF7ED;
-  --tag-dev-fg: #EA580C;
-  --tag-mktg-bg: #ECFDF5;
-  --tag-mktg-fg: #059669;
+  /* Статусы */
+  --status-todo: #9A9A96;
+  --status-progress: #E0982A;
+  --status-done: #5F9E3A;
 
-  /* Тени */
-  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(15, 23, 42, 0.04);
-  --shadow-card-hover: 0 4px 14px rgba(15, 23, 42, 0.10);
+  /* Категории */
+  --cat-dev: #D2562A;
+  --cat-design: #6C5CE7;
+  --cat-marketing: #3A8F68;
 
-  /* Фокус при навигации с клавиатуры */
-  --focus-ring: #6366F1;
+  /* Модалки и тени */
+  --overlay-backdrop: rgb(20 20 20 / 40%);
+  --modal-shadow: 0 24px 64px rgb(0 0 0 / 18%);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 5%);
+  --shadow-card-hover: 0 6px 18px rgb(0 0 0 / 8%);
+  --shadow-menu: 0 12px 32px rgb(0 0 0 / 14%);
 }
 
 
-/* ---------- 1. Токены: тёмная тема (по настройке системы) ---------- */
-@media (prefers-color-scheme: light) {
+/* ---------- 1. Токены: тёмная тема ---------- */
+@media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
 
-    --bg-main: #0B0F19;
-    --surface-column: #111625;
-    --surface-card: #161F33;
-    --surface-card-hover: #1E2942;
-    --border-subtle: #1F293D;
+    --bg-main: #0E0E0E;
+    --surface-column: #161616;
+    --surface-card: #1D1D1D;
+    --surface-card-hover: #222222;
+    --surface-sunken: #141414;
+    --border-subtle: #2C2C2C;
+    --border-strong: #3B3B3B;
 
-    --text-primary: #F1F5F9;
-    --text-secondary: #94A3B8;
-    --text-muted: #64748B;
-    --overlay-backdrop: rgb(0 0 0 / 65%);
-    --modal-shadow: 0 20px 60px rgb(0 0 0 / 45%);
-    --accent-strong: #818CF8;
-    --accent-soft-start: #312E81;
-    --accent-soft-end: #3730A3;
-    --control-border: #334155;
-    --control-placeholder: #94A3B8;
-    --control-shadow: 0 1px 4px rgb(0 0 0 / 20%);
-    --danger: #F87171;
-    --danger-strong: #EF4444;
-    --status-default: #818CF8;
-    --status-todo: #94A3B8;
-    --status-progress: #FBBF24;
-    --status-done: #34D399;
-    --control-focus: #A5B4FC;
-    --checkbox-accent: #818CF8;
-    --button-dark-bg: #0F172A;
+    --text-primary: #F1F1F1;
+    --text-secondary: #A8A8A8;
+    --text-muted: #727272;
 
-    --sidebar-gradient: linear-gradient(180deg, #131A2E 0%, #090D17 100%);
-    --sidebar-active-item: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    --accent: #5A4FCF;
+    --accent-hover: #6A60DD;
+    --accent-soft: #EEECFD;
+    --accent-text: #A99FF5;
+    --focus-ring: rgb(122 111 230 / 45%);
 
-    --btn-primary-gradient: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
-    --btn-primary-hover: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    --danger: #F08A80;
+    --danger-soft: #401515;
+    --danger-border: #7A3530;
+    --success: #8CBF5A;
 
-    --tag-design-bg: #1E1B4B;
-    --tag-design-fg: #818CF8;
-    --tag-dev-bg: #311B14;
-    --tag-dev-fg: #FB923C;
-    --tag-mktg-bg: #064E3B;
-    --tag-mktg-fg: #34D399;
+    --status-todo: #8B8B8B;
+    --status-progress: #E9A23B;
+    --status-done: #79B04A;
 
-    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35);
-    --shadow-card-hover: 0 4px 14px rgba(0, 0, 0, 0.45);
+    --cat-dev: #D9653B;
+    --cat-design: #8073E6;
+    --cat-marketing: #4C9D78;
 
-    --focus-ring: #818CF8;
+    --overlay-backdrop: rgb(0 0 0 / 60%);
+    --modal-shadow: 0 24px 64px rgb(0 0 0 / 55%);
+    --shadow-card: none;
+    --shadow-card-hover: 0 6px 18px rgb(0 0 0 / 35%);
+    --shadow-menu: 0 12px 32px rgb(0 0 0 / 50%);
   }
 }
 
@@ -130,6 +116,15 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--text-primary);
+  background-color: var(--bg-main);
+  -webkit-font-smoothing: antialiased;
 }
 
 img,
@@ -154,6 +149,10 @@ button {
   padding: 0;
 }
 
+button:disabled {
+  cursor: default;
+}
+
 ul,
 ol {
   list-style: none;
@@ -165,3 +164,152 @@ a {
   text-decoration: none;
 }
 
+:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Safari сам рисует в полях кнопки автозаполнения (контакты, пароли) — прячем их */
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  position: absolute;
+  right: 0;
+  pointer-events: none;
+}
+
+
+/* ---------- 3. Общие элементы ---------- */
+
+/* Скрыть элемент визуально, но оставить для клавиатуры и скринридеров */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Загрузка / ошибка */
+.statusMessage {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+}
+
+.statusMessage--error {
+  color: var(--danger);
+}
+
+/* Кнопки */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn--primary {
+  color: var(--text-on-accent);
+  background-color: var(--accent);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+.btn--secondary {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+  background-color: var(--surface-card);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  background-color: var(--surface-card-hover);
+}
+
+.btn--secondary:disabled {
+  color: var(--text-secondary);
+  background-color: var(--surface-sunken);
+  border-color: var(--border-subtle);
+}
+
+/* Кнопка-иконка: крестик, «+», «⋯» */
+.iconBtn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: var(--text-muted);
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.iconBtn:hover {
+  color: var(--text-primary);
+  background-color: var(--surface-card-hover);
+}
+
+/* Точка статуса */
+.statusDot {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--status-todo);
+}
+
+.statusDot--in_progress { background-color: var(--status-progress); }
+.statusDot--done { background-color: var(--status-done); }
+
+/* Плашка «просрочено» */
+.overdueBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--danger);
+  background-color: var(--danger-soft);
+  white-space: nowrap;
+}
+
+/* Затемнение под модалкой */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--overlay-backdrop);
+  backdrop-filter: blur(2px);
+}
+
+/* Окно модалки */
+.modal {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 640px);
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  color: var(--text-primary);
+  background-color: var(--surface-card);
+  box-shadow: var(--modal-shadow);
+}

@@ -1,3 +1,4 @@
+// Маска поля даты: "12112026" → "12.11.2026"
 export function formatDateInput(value: string): string {
     const digits = value.replace(/\D/g, "").slice(0, 8);
 
@@ -7,38 +8,27 @@ export function formatDateInput(value: string): string {
     return `${digits.slice(0, 2)}.${digits.slice(2, 4)}.${digits.slice(4)}`;
 }
 
-export function formatTimeInput(value: string): string {
-    const digits = value.replace(/\D/g, "").slice(0, 4);
-
-    if (digits.length <= 2) return digits;
-
-    return `${digits.slice(0, 2)}:${digits.slice(2)}`;
-}
-
-export function isValidDateInput(value: string): boolean {
+// "12.11.2026" → Date (начало дня); null — если формат неверный или такой даты нет (31.02)
+export function parseDateInput(value: string): Date | null {
     const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(value);
-    if (!match) return false;
+    if (!match) return null;
 
-    const [, dayValue, monthValue, yearValue] = match;
-    const day = Number(dayValue);
-    const month = Number(monthValue);
-    const year = Number(yearValue);
+    const day = Number(match[1]);
+    const month = Number(match[2]);
+    const year = Number(match[3]);
     const date = new Date(year, month - 1, day);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
 
-    return date.getFullYear() === year
+    const isRealDate = date.getFullYear() === year
         && date.getMonth() === month - 1
-        && date.getDate() === day
-        && date >= today;
+        && date.getDate() === day;
+
+    return isRealDate ? date : null;
 }
 
-export function isValidTimeInput(value: string): boolean {
-    const match = /^(\d{2}):(\d{2})$/.exec(value);
-    if (!match) return false;
+// Date → "12.11.2026"
+export function toDateInput(date: Date): string {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
 
-    const hours = Number(match[1]);
-    const minutes = Number(match[2]);
-
-    return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59;
+    return `${day}.${month}.${date.getFullYear()}`;
 }

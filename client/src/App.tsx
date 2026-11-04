@@ -10,17 +10,10 @@ import TaskDetails from "./components/TaskForm/TaskDetails";
 import CreateTaskForm from "./components/TaskForm/CreateTaskForm";
 
 
-const TASK_STATUSES: string[] = ["todo", "in_progress", "done"];
-
-function isTaskStatus(value: string | null): value is TaskStatus {
-  return value !== null && TASK_STATUSES.includes(value);
-}
-
-
 function App() {
   const [searchParams] = useSearchParams();
   const openedTaskId = searchParams.get("task");
-  const createStatus = searchParams.get("new");
+  const isCreating = searchParams.has("new");
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
@@ -111,7 +104,7 @@ function App() {
       </Routes>
 
       {openedTaskId && <TaskDetails taskId={openedTaskId} />}
-      {isTaskStatus(createStatus) && <CreateTaskForm status={createStatus} />}
+      {isCreating && <CreateTaskForm />}
     </TasksContext.Provider>
   );
 }

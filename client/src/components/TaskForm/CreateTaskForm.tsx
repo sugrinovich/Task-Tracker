@@ -1,60 +1,91 @@
 import { useContext, useState } from "react";
-import { CalendarDays, ChevronDown, Clock3, Plus, Sparkles, X } from "lucide-react";
+import { CalendarDays, CircleAlert, Plus, Sparkles, X } from "lucide-react";
 
-import type { TaskCategory, TaskStatus } from "../../types/task";
+import type { TaskCategory } from "../../types/task";
 import { createNewTask } from "../../api/tasks";
 import { TasksContext } from "../../context/TasksContext";
 import { useCloseModal } from "../../hooks/useCloseModal";
-import { formatDateInput, formatTimeInput, isValidDateInput, isValidTimeInput } from "../../utils/dateInputFormatter";
+import { formatDateInput, parseDateInput, toDateInput } from "../../utils/dateInputFormatter";
+import CategoryLabel from "../CategoryLabel/CategoryLabel";
 
 import "./CreateTaskForm.css";
 
 
-const CATEGORY_OPTIONS: { value: TaskCategory; label: string }[] = [
-    { value: "design", label: "Дизайн" },
-    { value: "dev", label: "Разработка" },
-    { value: "marketing", label: "Маркетинг" },
+const CATEGORIES: TaskCategory[] = ["dev", "design", "marketing"];
+
+
+const DATE_SHORTCUTS = [
+    { label: "Сегодня", days: 0 },
+    { label: "Завтра", days: 1 },
+    { label: "Через неделю", days: 7 },
 ];
 
-const STATUS_LABELS: Record<TaskStatus, string> = {
-    todo: "К выполнению",
-    in_progress: "В работе",
-    done: "Готово",
-};
+const DESCRIPTION_MAX = 2000;
 
 
-type CreateTaskFormProps = {
-    status: TaskStatus;
-};
+type FormField = "title" | "category" | "date";
+type FormErrors = Partial<Record<FormField, string>>;
 
-function CreateTaskForm({ status }: CreateTaskFormProps) {
+function shortcutDate(days: number): string {
+    const date = new Date();
+    date.setDate(date.getDate() + days);
+    return toDateInput(date);
+}
+
+function validateDate(value: string): string | undefined {
+    if (!value) return "Укажите срок";
+
+    const date = parseDateInput(value);
+    if (!date) return "Введите дату в формате ДД.ММ.ГГГГ";
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (date < today) return "Срок не может быть в прошлом";
+
+    return undefined;
+}
+
+function FieldError({ message }: { message?: string }) {
+    if (!message) return null;
+
+    return (
+        <p className="CreateTaskForm__error">
+            <CircleAlert size={18} />
+            {message}
+        </p>
+    );
+}
+
+
+// Новая задача всегда создаётся в «К выполнению»
+function CreateTaskForm() {
     const ctx = useContext(TasksContext);
     const handleClose = useCloseModal("new");
 
     const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [category, setCategory] = useState<TaskCategory | "">("");
+    const [category, setCategory] = useState<TaskCategory | null>(null);
     const [date, setDate] = useState("");
-    const [time, setTime] = useState("");
+    const [description, setDescription] = useState("");
     const [subtaskTitle, setSubtaskTitle] = useState("");
     const [subtasks, setSubtasks] = useState<string[]>([]);
-    const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
-    const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
+    const [errors, setErrors] = useState<FormErrors>({});
 
-    const descLen = description.length;
-    const selectedCategory = CATEGORY_OPTIONS.find(option => option.value === category);
+    const invalidClass = (field: FormField) =>
+        errors[field] ? "CreateTaskForm__control--invalid" : "";
 
-    const invalidClass = (field: string) =>
-        invalidFields.has(field) ? "CreateTaskForm__control--invalid" : "";
+    const clearError = (field: FormField) => {
+        setErrors(previous => {
+            if (!previous[field]) return previous;
 
-    const clearFieldValidation = (field: string) => {
-        setInvalidFields(previous => {
-            if (!previous.has(field)) return previous;
-
-            const updated = new Set(previous);
-            updated.delete(field);
+            const updated = { ...previous };
+            delete updated[field];
             return updated;
         });
+    };
+
+    const changeDate = (value: string) => {
+        setDate(value);
+        clearError("date");
     };
 
     const addSubtask = () => {
@@ -70,21 +101,21 @@ function CreateTaskForm({ status }: CreateTaskFormProps) {
     };
 
     const handleSubmit = async () => {
-        const nextInvalidFields = new Set<string>();
-        if (!title.trim()) nextInvalidFields.add("title");
-        if (!category) nextInvalidFields.add("category");
-        if (!isValidDateInput(date)) nextInvalidFields.add("date");
-        if (!isValidTimeInput(time)) nextInvalidFields.add("time");
-        setInvalidFields(nextInvalidFields);
+        const nextErrors: FormErrors = {};
+        if (!title.trim()) nextErrors.title = "Введите название";
+        if (!category) nextErrors.category = "Выберите метку";
+        const dateError = validateDate(date);
+        if (dateError) nextErrors.date = dateError;
+        setErrors(nextErrors);
 
-        if (nextInvalidFields.size > 0 || !category) return;
+        const deadline = parseDateInput(date);
+        if (Object.keys(nextErrors).length > 0 || !category || !deadline) return;
 
-        const dateTime = date && time
-            ? `${date.split(".").reverse().join("-")}T${time}`
-            : "";
+        // Срок — до конца выбранного дня
+        deadline.setHours(23, 59, 59, 999);
 
         try {
-            await createNewTask(title, description, category, status, dateTime, subtasks);
+            await createNewTask(title, description, category, deadline.toISOString(), subtasks);
             ctx?.onAddTask();
             handleClose();
         } catch (error) {
@@ -94,153 +125,181 @@ function CreateTaskForm({ status }: CreateTaskFormProps) {
 
     return (
         <div className="modalBackdrop">
-            <div className="CreateTaskForm">
+            <div
+                className="modal CreateTaskForm"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="create-task-title"
+            >
                 <header className="CreateTaskForm__header">
+                    <span className="CreateTaskForm__headingIcon">
+                        <Sparkles size={26} />
+                    </span>
                     <div className="CreateTaskForm__heading">
-                        <span className="CreateTaskForm__headingIcon">
-                            <Sparkles size={29} strokeWidth={2.3} />
-                        </span>
-                        <h2 className="CreateTaskForm__title">Новая задача</h2>
+                        <h2 className="CreateTaskForm__title" id="create-task-title">Новая задача</h2>
+                        <p className="CreateTaskForm__column">
+                            в колонку
+                            <span className="CreateTaskForm__columnName">
+                                <span className="statusDot statusDot--todo" />
+                                К выполнению
+                            </span>
+                        </p>
                     </div>
 
-                    <span className={`CreateTaskForm__status CreateTaskForm__status--${status}`}>
-                        {STATUS_LABELS[status]}
-                    </span>
-
                     <button
-                        className="CreateTaskForm__close"
+                        className="iconBtn CreateTaskForm__close"
                         type="button"
                         aria-label="Закрыть форму"
                         onClick={handleClose}
                     >
-                        <X size={26} strokeWidth={1.8} />
+                        <X size={24} />
                     </button>
                 </header>
 
-                <form className="CreateTaskForm__form">
+                <form className="CreateTaskForm__form" onSubmit={(event) => event.preventDefault()}>
                     <div className="CreateTaskForm__content">
-                        <div className="CreateTaskForm__options">
-                            <div className="CreateTaskForm__field">
-                                <span className="CreateTaskForm__label">Метка</span>
-                                <div className="CreateTaskForm__categoryPicker">
-                                    <button
-                                        className={`CreateTaskForm__control CreateTaskForm__choice ${categoryMenuOpen ? "CreateTaskForm__choice--open" : ""} ${invalidClass("category")}`}
-                                        type="button"
-                                        aria-expanded={categoryMenuOpen}
-                                        onMouseEnter={() => clearFieldValidation("category")}
-                                        onClick={() => setCategoryMenuOpen(open => !open)}
-                                    >
-                                        {selectedCategory ? (
-                                            <span className={`CreateTaskForm__tag CreateTaskForm__tag--${category}`}>
-                                                {selectedCategory.label}
-                                            </span>
-                                        ) : (
-                                            <span className="CreateTaskForm__categoryPlaceholder">
-                                                Выберите категорию
-                                            </span>
-                                        )}
-                                        <ChevronDown size={20} />
-                                    </button>
-
-                                    {categoryMenuOpen && (
-                                        <>
-                                            <div
-                                                className="CreateTaskForm__categoryBackdrop"
-                                                onClick={() => setCategoryMenuOpen(false)}
-                                            />
-                                            <div className="CreateTaskForm__categoryMenu">
-                                                {CATEGORY_OPTIONS.map(option => (
-                                                    <button
-                                                        className="CreateTaskForm__categoryOption"
-                                                        type="button"
-                                                        key={option.value}
-                                                        onClick={() => {
-                                                            setCategory(option.value);
-                                                            setCategoryMenuOpen(false);
-                                                        }}
-                                                    >
-                                                        <span className={`CreateTaskForm__tag CreateTaskForm__tag--${option.value}`}>
-                                                            {option.label}
-                                                        </span>
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="CreateTaskForm__field">
-                                <span className="CreateTaskForm__label">Срок выполнения</span>
-                                <span className="CreateTaskForm__dateTime">
-                                    <span className="CreateTaskForm__dateControl">
-                                        <CalendarDays size={18} />
-                                        <input
-                                            className={`CreateTaskForm__control CreateTaskForm__dateInput ${invalidClass("date")}`}
-                                            type="text"
-                                            inputMode="numeric"
-                                            name="date"
-                                            placeholder="ДД.ММ.ГГГГ"
-                                            maxLength={10}
-                                            value={date}
-                                            onMouseEnter={() => clearFieldValidation("date")}
-                                            onChange={(event) => setDate(formatDateInput(event.target.value))}
-                                        />
-                                    </span>
-                                    <span className="CreateTaskForm__dateControl">
-                                        <Clock3 size={18} />
-                                        <input
-                                            className={`CreateTaskForm__control CreateTaskForm__dateInput ${invalidClass("time")}`}
-                                            type="text"
-                                            inputMode="numeric"
-                                            name="time"
-                                            placeholder="ЧЧ:ММ"
-                                            maxLength={5}
-                                            value={time}
-                                            onMouseEnter={() => clearFieldValidation("time")}
-                                            onChange={(event) => setTime(formatTimeInput(event.target.value))}
-                                        />
-                                    </span>
-                                </span>
-                            </div>
-                        </div>
-
-                        <label className="CreateTaskForm__field">
-                            <span className="CreateTaskForm__label">Название</span>
+                        {/* ---------- Название ---------- */}
+                        <div className="CreateTaskForm__field">
+                            <label className="CreateTaskForm__label" htmlFor="task-title">
+                                Название <span className="CreateTaskForm__required">*</span>
+                            </label>
                             <input
+                                id="task-title"
+                                autoComplete="off"
                                 className={`CreateTaskForm__control ${invalidClass("title")}`}
                                 type="text"
-                                name="title"
-                                placeholder="Введите название"
+                                placeholder="Например, подготовить релиз 1.2"
                                 value={title}
-                                onMouseEnter={() => clearFieldValidation("title")}
-                                onChange={(event) => setTitle(event.target.value)}
+                                onChange={(event) => {
+                                    setTitle(event.target.value);
+                                    clearError("title");
+                                }}
                             />
-                        </label>
+                            <FieldError message={errors.title} />
+                        </div>
 
-                        <label className="CreateTaskForm__field">
-                            <span className="CreateTaskForm__label">Описание</span>
+                        {/* ---------- Метка ---------- */}
+                        <div className="CreateTaskForm__field">
+                            <span className="CreateTaskForm__label">
+                                Метка <span className="CreateTaskForm__required">*</span>
+                            </span>
+                            <div className="CreateTaskForm__chips">
+                                {CATEGORIES.map(option => (
+                                    <button
+                                        key={option}
+                                        type="button"
+                                        className={[
+                                            "CreateTaskForm__chip",
+                                            `CreateTaskForm__chip--${option}`,
+                                            category === option ? "CreateTaskForm__chip--selected" : "",
+                                            errors.category ? "CreateTaskForm__chip--invalid" : "",
+                                        ].filter(Boolean).join(" ")}
+                                        aria-pressed={category === option}
+                                        onClick={() => {
+                                            setCategory(option);
+                                            clearError("category");
+                                        }}
+                                    >
+                                        <CategoryLabel category={option} />
+                                    </button>
+                                ))}
+                            </div>
+                            <FieldError message={errors.category} />
+                        </div>
+
+                        {/* ---------- Срок ---------- */}
+                        <div className="CreateTaskForm__field">
+                            <label className="CreateTaskForm__label" htmlFor="task-date">
+                                Срок <span className="CreateTaskForm__required">*</span>
+                            </label>
+                            <div className="CreateTaskForm__dateRow">
+                                <span className={`CreateTaskForm__control CreateTaskForm__dateControl ${invalidClass("date")}`}>
+                                    <CalendarDays size={20} />
+                                    <input
+                                        id="task-date"
+                                        autoComplete="off"
+                                        type="text"
+                                        inputMode="numeric"
+                                        placeholder="ДД.ММ.ГГГГ"
+                                        maxLength={10}
+                                        value={date}
+                                        onChange={(event) => changeDate(formatDateInput(event.target.value))}
+                                    />
+                                </span>
+
+                                {DATE_SHORTCUTS.map(shortcut => {
+                                    const value = shortcutDate(shortcut.days);
+
+                                    return (
+                                        <button
+                                            key={shortcut.label}
+                                            type="button"
+                                            className={`CreateTaskForm__chip ${date === value ? "CreateTaskForm__chip--active" : ""}`}
+                                            onClick={() => changeDate(value)}
+                                        >
+                                            {shortcut.label}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                            {errors.date
+                                ? <FieldError message={errors.date} />
+                                : <p className="CreateTaskForm__hint">Задача должна быть готова до конца этого дня</p>}
+                        </div>
+
+                        {/* ---------- Описание ---------- */}
+                        <div className="CreateTaskForm__field">
+                            <label className="CreateTaskForm__label" htmlFor="task-description">
+                                Описание <span className="CreateTaskForm__optional">необязательно</span>
+                            </label>
                             <span className="CreateTaskForm__textareaWrap">
                                 <textarea
+                                    id="task-description"
+                                    autoComplete="off"
                                     className="CreateTaskForm__control CreateTaskForm__textarea"
-                                    name="description"
                                     value={description}
-                                    maxLength={2000}
-                                    placeholder="Введите описание"
+                                    maxLength={DESCRIPTION_MAX}
+                                    placeholder="Что нужно сделать и зачем"
                                     onChange={(event) => setDescription(event.target.value)}
                                 />
-                                <span className="CreateTaskForm__counter">{descLen}/2000</span>
+                                <span className="CreateTaskForm__counter">
+                                    {description.length}/{DESCRIPTION_MAX}
+                                </span>
                             </span>
-                        </label>
+                        </div>
 
+                        {/* ---------- Подзадачи ---------- */}
                         <div className="CreateTaskForm__field">
-                            <span className="CreateTaskForm__label">Подзадачи</span>
+                            <label className="CreateTaskForm__label" htmlFor="task-subtask">
+                                Подзадачи <span className="CreateTaskForm__optional">необязательно</span>
+                            </label>
+
+                            {subtasks.length > 0 && (
+                                <ol className="CreateTaskForm__subtaskList">
+                                    {subtasks.map((subtask, index) => (
+                                        <li className="CreateTaskForm__subtask" key={`${subtask}-${index}`}>
+                                            <span className="CreateTaskForm__subtaskText">{subtask}</span>
+                                            <button
+                                                className="iconBtn"
+                                                type="button"
+                                                aria-label={`Удалить подзадачу «${subtask}»`}
+                                                onClick={() => removeSubtask(index)}
+                                            >
+                                                <X size={20} />
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ol>
+                            )}
+
                             <div className="CreateTaskForm__subtaskCreator">
                                 <input
+                                    id="task-subtask"
+                                    autoComplete="off"
                                     className="CreateTaskForm__control CreateTaskForm__subtaskInput"
                                     type="text"
                                     value={subtaskTitle}
-                                    placeholder="Добавить подзадачу"
+                                    placeholder="Новая подзадача, Enter чтобы добавить"
                                     onChange={(event) => setSubtaskTitle(event.target.value)}
                                     onKeyDown={(event) => {
                                         if (event.key === "Enter") {
@@ -255,37 +314,18 @@ function CreateTaskForm({ status }: CreateTaskFormProps) {
                                     aria-label="Добавить подзадачу"
                                     onClick={addSubtask}
                                 >
-                                    <Plus size={20} />
+                                    <Plus size={22} />
                                 </button>
                             </div>
-
-                            {subtasks.length > 0 && (
-                                <ul className="CreateTaskForm__subtaskList">
-                                    {subtasks.map((subtask, index) => (
-                                        <li className="CreateTaskForm__subtask" key={`${subtask}-${index}`}>
-                                            <span className="CreateTaskForm__subtaskText">{subtask}</span>
-                                            <button
-                                                className="CreateTaskForm__subtaskRemove"
-                                                type="button"
-                                                aria-label={`Удалить подзадачу «${subtask}»`}
-                                                onClick={() => removeSubtask(index)}
-                                            >
-                                                <X size={17} />
-                                            </button>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
                         </div>
                     </div>
 
                     <footer className="CreateTaskForm__footer">
-                        <button
-                            className="CreateTaskForm__button"
-                            type="button"
-                            onClick={handleSubmit}
-                        >
-                            <Plus size={25} />
+                        <button className="btn btn--secondary" type="button" onClick={handleClose}>
+                            Отмена
+                        </button>
+                        <button className="btn btn--primary" type="button" onClick={handleSubmit}>
+                            <Plus size={20} />
                             Создать задачу
                         </button>
                     </footer>

@@ -84,7 +84,7 @@ taskRouter.patch("/:id", (req: Request, res: Response) => {
 
 
 taskRouter.post("/", (req: Request, res: Response) => {
-    const { title, description, category, status, date, subtasks, user } = req.body ?? {};
+    const { title, description, category, status, date, subtasks } = req.body ?? {};
 
     if (typeof title !== "string" || !title.trim()) {
         res.status(400).json({ message: "Title is required" });
@@ -96,9 +96,9 @@ taskRouter.post("/", (req: Request, res: Response) => {
         return;
     }
 
-    const taskStatus = status ?? "todo";
-    if (typeof taskStatus !== "string" || !STATUSES.includes(taskStatus)) {
-        res.status(400).json({ message: "Invalid status" });
+    // Новая задача всегда попадает в «К выполнению», дальше — только через PATCH
+    if (status !== undefined && status !== "todo") {
+        res.status(400).json({ message: "New task can only be created with status todo" });
         return;
     }
 
@@ -129,10 +129,10 @@ taskRouter.post("/", (req: Request, res: Response) => {
         title: title.trim(),
         description: typeof description === "string" ? description.trim() : "",
         category: category as TaskCategory,
-        status: taskStatus as TaskStatus,
+        status: "todo",
         date: typeof date === "string" ? date : "",
         subtasks: normalizedSubtasks,
-        user: user ?? { name: "", avatar: "AK" },
+        createdAt: new Date().toISOString(),
     };
 
     tasks.push(newTask);

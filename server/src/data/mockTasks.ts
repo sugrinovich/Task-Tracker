@@ -3,6 +3,7 @@ import { Task } from "../types/task";
 export const tasks: Task[] = [
   {
     id: "task-1",
+    createdAt: "2026-10-01T09:00:00Z",
     status: "todo",
     category: "dev",
     title: "Сделать авторизацию на сайте",
@@ -30,13 +31,10 @@ export const tasks: Task[] = [
         completed: false,
       },
     ],
-    user: {
-      name: "Алексей Кузнецов",
-      avatar: "AK",
-    },
   },
   {
     id: "task-2",
+    createdAt: "2026-10-01T11:00:00Z",
     status: "in_progress",
     category: "dev",
     title: "API каталога",
@@ -69,13 +67,10 @@ export const tasks: Task[] = [
         completed: false,
       },
     ],
-    user: {
-      name: "Иван Петров",
-      avatar: "ИП",
-    },
   },
   {
     id: "task-3",
+    createdAt: "2026-10-02T10:00:00Z",
     status: "done",
     category: "design",
     title: "Прототип в Figma",
@@ -103,13 +98,10 @@ export const tasks: Task[] = [
         completed: true,
       },
     ],
-    user: {
-      name: "Алексей Кузнецов",
-      avatar: "AK",
-    },
   },
   {
     id: "task-4",
+    createdAt: "2026-10-05T12:00:00Z",
     status: "todo",
     category: "marketing",
     title: "Тексты для сторисов",
@@ -132,9 +124,5 @@ export const tasks: Task[] = [
         completed: false,
       },
     ],
-    user: {
-      name: "Леонид Васильев",
-      avatar: "ЛВ",
-    },
   },
 ];

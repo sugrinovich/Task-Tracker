@@ -1,20 +1,17 @@
 import { useContext, useState } from "react";
-import { Calendar, Clock3, SquareCheck, FileText, X } from "lucide-react";
+import { AlarmClock, Check, FileText, ListChecks, Play, X } from "lucide-react";
 
 import type { Subtask, TaskStatus } from "../../types/task";
 import { changeStatusSubtask, changeStatusTask } from "../../api/tasks";
 import { TasksContext } from "../../context/TasksContext";
 import { useCloseModal } from "../../hooks/useCloseModal";
-import { datePartFormatter, timePartFormatter } from "../../utils/dateTimeFormatter";
+import { datePartFormatter } from "../../utils/dateTimeFormatter";
+import { overdueDays, overdueFormatter } from "../../utils/dateFormatter";
+import CategoryLabel from "../CategoryLabel/CategoryLabel";
+import ProgressBar from "../ProgressBar/ProgressBar";
 
 import "./TaskDetails.css";
 
-
-const CATEGORY_LABELS = {
-    design: "Дизайн",
-    dev: "Разработка",
-    marketing: "Маркетинг",
-};
 
 const COLUM_STATUS: Record<TaskStatus, string> = {
     todo: "К выполнению",
@@ -23,9 +20,9 @@ const COLUM_STATUS: Record<TaskStatus, string> = {
 };
 
 const BUTTON_CONFIG = {
-    todo: { text: "Приступить", nextStatus: "in_progress" as TaskStatus },
-    in_progress: { text: "Закончить", nextStatus: "done" as TaskStatus },
-    done: { text: "Выполнено", nextStatus: "done" as TaskStatus },
+    todo: { text: "Приступить", Icon: Play, nextStatus: "in_progress" as TaskStatus },
+    in_progress: { text: "Закончить", Icon: Check, nextStatus: "done" as TaskStatus },
+    done: { text: "Выполнено", Icon: Check, nextStatus: "done" as TaskStatus },
 };
 
 
@@ -45,8 +42,10 @@ function TaskDetails({ taskId }: TaskDetailsProps) {
     // Все хуки — выше этой строки: после раннего return хуки вызывать нельзя
     if (!task) return null;
 
-    const completedSubtasks = task.subtasks.filter(subtask => subtask.completed).length;
     const isDone = task.status === "done";
+    const totalSubtasks = task.subtasks.length;
+    const completedSubtasks = task.subtasks.filter(subtask => subtask.completed).length;
+    const overdue = isDone ? null : overdueDays(task.date);
     const currentBtn = BUTTON_CONFIG[task.status];
 
     const clearSubtaskHighlight = (subtaskId: string) => {
@@ -94,101 +93,120 @@ function TaskDetails({ taskId }: TaskDetailsProps) {
 
     return (
         <div className="modalBackdrop">
-            <div className="TaskDetails">
-                <button
-                    className="TaskDetails__close"
-                    type="button"
-                    aria-label="Закрыть"
-                    onClick={handleClose}
-                >
-                    <X size={20} />
-                </button>
-
-                <div className="TaskDetails__header">
-                    <h2 className="TaskDetails__title">
-                        {task.title.length > 30 ? `${task.title.slice(0, 30)}...` : task.title}
-                    </h2>
-                    <span className={`TaskDetails__status TaskDetails__status--${task.status}`}>
-                        {COLUM_STATUS[task.status]}
-                    </span>
-                </div>
-
-                <div className="TaskDetails__content">
-                    <div className="TaskDetails__info">
-                        <span className={`TaskDetails__tag TaskDetails__tag--${task.category}`}>
-                            {CATEGORY_LABELS[task.category]}
-                        </span>
-
-                        <p className="TaskDetails__date">
-                            <span className="TaskDetails__datePart">
-                                <Calendar size={18} />
-                                {datePartFormatter(task.date)}
+            <div
+                className="modal TaskDetails"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="task-details-title"
+            >
+                <div className="TaskDetails__scroll">
+                    <header className="TaskDetails__header">
+                        <div className="TaskDetails__labels">
+                            <CategoryLabel category={task.category} />
+                            <span className="TaskDetails__status">
+                                <span className={`statusDot statusDot--${task.status}`} />
+                                {COLUM_STATUS[task.status]}
                             </span>
-                            <span className="TaskDetails__datePart">
-                                <Clock3 size={18} />
-                                {timePartFormatter(task.date)}
-                            </span>
-                        </p>
-
-                        <div className="TaskDetails__avatar">
-                            <span className="TaskDetails__initials">{task.user.avatar}</span>
-                            <p className="TaskDetails__username">{task.user.name}</p>
                         </div>
+
+                        <button
+                            className="iconBtn TaskDetails__close"
+                            type="button"
+                            aria-label="Закрыть"
+                            onClick={handleClose}
+                        >
+                            <X size={24} />
+                        </button>
+                    </header>
+
+                    <h2 className="TaskDetails__title" id="task-details-title">
+                        {task.title}
+                    </h2>
+
+                    <div className="TaskDetails__meta">
+                        <div className="TaskDetails__metaItem">
+                            <span className="TaskDetails__metaLabel">Срок</span>
+                            <span>до {datePartFormatter(task.date)}</span>
+                            {overdue !== null && (
+                                <span className="overdueBadge">
+                                    <AlarmClock size={16} />
+                                    {overdueFormatter(overdue)}
+                                </span>
+                            )}
+                        </div>
+
                     </div>
 
-                    <section className="TaskDetails__description">
-                        <h3 className="TaskDetails__descriptionTitle">
-                            <FileText size={18} />
+                    <section className="TaskDetails__section">
+                        <h3 className="TaskDetails__sectionTitle">
+                            <FileText size={20} />
                             Описание
                         </h3>
-                        <p className={`TaskDetails__descriptionText ${!task.description ? "TaskDetails__descriptionText--empty" : ""}`}>
+                        <p className={`TaskDetails__description ${!task.description ? "TaskDetails__description--empty" : ""}`}>
                             {task.description || "Описание отсутствует"}
                         </p>
                     </section>
 
-                    <section className="TaskDetails__checklist">
-                        <h3 className="TaskDetails__checklistTitle">
-                            <SquareCheck size={18} />
-                            Подзадачи
-                            <span className="TaskDetails__checklistInfo">
-                                ({completedSubtasks}/{task.subtasks.length})
-                            </span>
-                        </h3>
+                    {totalSubtasks > 0 && (
+                        <section className="TaskDetails__section">
+                            <div className="TaskDetails__sectionHeader">
+                                <h3 className="TaskDetails__sectionTitle">
+                                    <ListChecks size={20} />
+                                    Подзадачи
+                                </h3>
+                                <span className="TaskDetails__counter">
+                                    {completedSubtasks} из {totalSubtasks}
+                                </span>
+                            </div>
 
-                        {task.subtasks.map(subtask => (
-                            <label
-                                key={subtask.id}
-                                className={[
-                                    "TaskDetails__subtask",
-                                    subtask.completed ? "TaskDetails__subtask--completed" : "",
-                                    highlightedSubtasks.has(subtask.id) && !subtask.completed
-                                        ? "TaskDetails__subtask--error"
-                                        : "",
-                                ].filter(Boolean).join(" ")}
-                                onMouseEnter={() => clearSubtaskHighlight(subtask.id)}
-                            >
-                                <input
-                                    type="checkbox"
-                                    className="TaskDetails__checklistInput"
-                                    checked={subtask.completed}
-                                    onChange={() => handleSubtaskToggle(subtask)}
-                                />
-                                <span className="TaskDetails__subtaskText">{subtask.title}</span>
-                            </label>
-                        ))}
-                    </section>
+                            <ProgressBar value={completedSubtasks} max={totalSubtasks} />
+
+                            <ul className="TaskDetails__subtasks">
+                                {task.subtasks.map(subtask => (
+                                    <li key={subtask.id}>
+                                        <label
+                                            className={[
+                                                "TaskDetails__subtask",
+                                                subtask.completed ? "TaskDetails__subtask--completed" : "",
+                                                highlightedSubtasks.has(subtask.id) && !subtask.completed
+                                                    ? "TaskDetails__subtask--error"
+                                                    : "",
+                                            ].filter(Boolean).join(" ")}
+                                            onMouseEnter={() => clearSubtaskHighlight(subtask.id)}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                className="visuallyHidden"
+                                                checked={subtask.completed}
+                                                onChange={() => handleSubtaskToggle(subtask)}
+                                            />
+                                            <span className="TaskDetails__checkbox" aria-hidden="true">
+                                                <Check size={16} strokeWidth={3} />
+                                            </span>
+                                            <span className="TaskDetails__subtaskText">{subtask.title}</span>
+                                        </label>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    )}
                 </div>
 
-                <div className="TaskDetails__footer">
+                <footer className="TaskDetails__footer">
+                    <span className="TaskDetails__created">
+                        {task.createdAt && `Создана ${datePartFormatter(task.createdAt)}`}
+                    </span>
+
                     <button
-                        className="TaskDetails__btn TaskDetails__btn--primary"
+                        className={`btn ${isDone ? "btn--secondary" : "btn--primary"}`}
                         type="button"
                         disabled={isDone}
                         onClick={handleStatusButtonClick}
                     >
+                        <currentBtn.Icon size={20} />
                         {currentBtn.text}
                     </button>
-                </div>
+                </footer>
             </div>
         </div>
     );

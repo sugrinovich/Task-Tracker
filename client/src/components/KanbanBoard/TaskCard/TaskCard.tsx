@@ -1,20 +1,16 @@
 import { useState, useContext, type MouseEvent } from "react";
 import { Link } from "react-router-dom";
-import { Calendar, SquareCheck, EllipsisVertical } from "lucide-react";
+import { AlarmClock, Calendar, CircleCheck, Ellipsis, Pencil, Pin, SquareCheck, Trash2 } from "lucide-react";
 
 import type { Task } from "../../../types/task";
 import { deleteTask } from "../../../api/tasks";
 import { TasksContext } from "../../../context/TasksContext";
-import { dateFormatter } from "../../../utils/dateFormatter";
+import { dateFormatter, overdueDays, overdueFormatter } from "../../../utils/dateFormatter";
+import CategoryLabel from "../../CategoryLabel/CategoryLabel";
+import ProgressBar from "../../ProgressBar/ProgressBar";
 
 import "./TaskCard.css";
 
-
-const CATEGORY_LABELS = {
-    design: "Дизайн",
-    dev: "Разработка",
-    marketing: "Маркетинг",
-};
 
 // Меню лежит внутри <Link>: без этого клик по меню открывал бы задачу
 function stopLink(e: MouseEvent) {
@@ -31,7 +27,10 @@ function TaskCard({ task }: TaskCardProps) {
     const ctx = useContext(TasksContext);
     const [openMenu, setOpenMenu] = useState(false);
 
+    const isDone = task.status === "done";
+    const totalSubtasks = task.subtasks.length;
     const completedSubtasks = task.subtasks.filter(subtask => subtask.completed).length;
+    const overdue = isDone ? null : overdueDays(task.date);
 
     async function handleClickDelete() {
         try {
@@ -46,24 +45,24 @@ function TaskCard({ task }: TaskCardProps) {
 
     return (
         <Link
-            className={`taskCard taskCard--${task.category}`}
+            className={`taskCard ${isDone ? "taskCard--done" : ""}`}
             to={{ search: `?task=${task.id}` }}
         >
             <div className="taskCard__header">
-                <span className={`taskCard__tag taskCard__tag--${task.category}`}>
-                    {CATEGORY_LABELS[task.category]}
-                </span>
+                <CategoryLabel category={task.category} />
 
                 <div className="menuWrap">
                     <button
                         type="button"
-                        className="taskCard__menu"
+                        className={`iconBtn taskCard__menuBtn ${openMenu ? "taskCard__menuBtn--open" : ""}`}
+                        aria-label="Действия с задачей"
+                        aria-expanded={openMenu}
                         onClick={(e) => {
                             stopLink(e);
                             setOpenMenu(!openMenu);
                         }}
                     >
-                        <EllipsisVertical size={16} />
+                        <Ellipsis size={20} />
                     </button>
 
                     {openMenu && (
@@ -84,9 +83,9 @@ function TaskCard({ task }: TaskCardProps) {
                                         setOpenMenu(false);
                                     }}
                                 >
+                                    <Pin size={18} />
                                     Закрепить
                                 </button>
-                                <hr className="line" />
                                 <button
                                     className="menu__btn"
                                     type="button"
@@ -95,9 +94,10 @@ function TaskCard({ task }: TaskCardProps) {
                                         setOpenMenu(false);
                                     }}
                                 >
+                                    <Pencil size={18} />
                                     Редактировать
                                 </button>
-                                <hr className="line" />
+                                <hr className="menu__line" />
                                 <button
                                     className="menu__btn menu__btn--danger"
                                     type="button"
@@ -106,6 +106,7 @@ function TaskCard({ task }: TaskCardProps) {
                                         handleClickDelete();
                                     }}
                                 >
+                                    <Trash2 size={18} />
                                     Удалить
                                 </button>
                             </div>
@@ -114,22 +115,40 @@ function TaskCard({ task }: TaskCardProps) {
                 </div>
             </div>
 
-            <div className="taskCard__body">
-                <h3 className="taskCard__title">
-                    {task.title.length > 30 ? `${task.title.slice(0, 30)}...` : task.title}
-                </h3>
-            </div>
+            <h3 className="taskCard__title">{task.title}</h3>
+
+            {!isDone && completedSubtasks > 0 && (
+                <ProgressBar value={completedSubtasks} max={totalSubtasks} />
+            )}
 
             <div className="taskCard__footer">
-                <p className="taskCard__date">
-                    <Calendar size={16} />
-                    {dateFormatter(task.date)}
-                </p>
-                <p className="taskCard__progress">
-                    <SquareCheck size={16} />
-                    {completedSubtasks}/{task.subtasks.length}
-                </p>
-                <div className="taskCard__avatar">{task.user.avatar}</div>
+                {isDone ? (
+                    <span className="taskCard__meta taskCard__meta--done">
+                        <CircleCheck size={17} />
+                        Завершено
+                    </span>
+                ) : (
+                    <>
+                        {overdue !== null ? (
+                            <span className="overdueBadge">
+                                <AlarmClock size={16} />
+                                {overdueFormatter(overdue)}
+                            </span>
+                        ) : (
+                            <span className="taskCard__meta">
+                                <Calendar size={17} />
+                                {dateFormatter(task.date)}
+                            </span>
+                        )}
+
+                        {totalSubtasks > 0 && (
+                            <span className="taskCard__meta">
+                                <SquareCheck size={17} />
+                                {completedSubtasks}/{totalSubtasks}
+                            </span>
+                        )}
+                    </>
+                )}
             </div>
         </Link>
     );

@@ -1,5 +1,5 @@
-import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
+import { Plus } from "lucide-react";
 
 import type { Task, TaskStatus } from "../../../types/task";
 import TaskCard from "../TaskCard/TaskCard";
@@ -13,12 +13,6 @@ const COLUM_STATUS: Record<TaskStatus, string> = {
     done: "Готово",
 };
 
-const STATUS_COLORS: Record<TaskStatus, string> = {
-    todo: "#7081D7",
-    in_progress: "#F59E0B",
-    done: "#22C55E",
-};
-
 
 type KanbanColumProps = {
     tasks: Task[];
@@ -27,16 +21,24 @@ type KanbanColumProps = {
 
 function KanbanColum({ tasks, status }: KanbanColumProps) {
     return (
-        <div className="KanbanColum">
-            <div className="KanbanColum__header">
-                <h3
-                    className="KanbanColum__title"
-                    style={{ "--dot": STATUS_COLORS[status] } as CSSProperties}
-                >
-                    {COLUM_STATUS[status]}
-                </h3>
-                <p className="KanbanColum__total">{tasks.length}</p>
-            </div>
+        <section className="KanbanColum">
+            <header className="KanbanColum__header">
+                <span className={`statusDot statusDot--${status}`} />
+                <h2 className="KanbanColum__title">{COLUM_STATUS[status]}</h2>
+                <span className="KanbanColum__total">{tasks.length}</span>
+
+                {/* Создавать задачи можно только в «К выполнению» */}
+                {status === "todo" && (
+                    <Link
+                        className="iconBtn KanbanColum__add"
+                        to={{ search: "?new" }}
+                        aria-label="Добавить задачу"
+                        title="Добавить задачу"
+                    >
+                        <Plus size={22} />
+                    </Link>
+                )}
+            </header>
 
             <div className="KanbanColum__body">
                 {tasks.length === 0 && (
@@ -46,15 +48,8 @@ function KanbanColum({ tasks, status }: KanbanColumProps) {
                 {tasks.map(task => (
                     <TaskCard key={task.id} task={task} />
                 ))}
-
-                <Link
-                    className="KanbanColum__btn"
-                    to={{ search: `?new=${status}` }}
-                >
-                    + Добавить задачу
-                </Link>
             </div>
-        </div>
+        </section>
     );
 }
 

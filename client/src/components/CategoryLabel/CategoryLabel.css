@@ -1,0 +1,22 @@
+.CategoryLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.CategoryLabel::before {
+    content: "";
+    flex-shrink: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background-color: var(--cat-color);
+}
+
+.CategoryLabel--dev { --cat-color: var(--cat-dev); }
+.CategoryLabel--design { --cat-color: var(--cat-design); }
+.CategoryLabel--marketing { --cat-color: var(--cat-marketing); }

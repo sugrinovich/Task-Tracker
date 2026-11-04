@@ -15,8 +15,5 @@ export interface Task {
     description?: string | null;
     date: string;
     subtasks: Subtask[];
-    user: {
-        name: string;
-        avatar: string;
-    };
+    createdAt?: string;
 }
