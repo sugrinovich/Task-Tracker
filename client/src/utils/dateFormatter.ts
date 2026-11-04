@@ -8,13 +8,13 @@ export function dateFormatter(str: string, now: Date = new Date()) {
     const month = date.getMonth();
     const year = date.getFullYear();
 
-    const now_day = now.getDate();
-    const now_month = now.getMonth();
-    const now_year = now.getFullYear();
+    const isToday = day === now.getDate()
+        && month === now.getMonth()
+        && year === now.getFullYear();
 
-    if (day === now_day && month === now_month && year === now_year) return "Сегодня"
+    if (isToday) return "Сегодня";
 
-    else return `${day} ${MONTHS[month]}`
+    return `${day} ${MONTHS[month]}`;
 }
 
 export function isOverdueDate(str: string, now: Date = new Date()): boolean {

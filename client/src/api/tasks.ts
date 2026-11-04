@@ -12,9 +12,9 @@ export async function getTasks(): Promise<Task[]> {
 }
 
 export async function deleteTask(id: string): Promise<void> {
-    const res = await fetch(`/api/tasks/${id}`, 
-                            {method: "DELETE" }
-    );
+    const res = await fetch(`/api/tasks/${id}`, {
+        method: "DELETE",
+    });
 
     if (!res.ok) {
         throw new Error(`Ошибка удаления задачи: ${res.status}`);
@@ -22,10 +22,10 @@ export async function deleteTask(id: string): Promise<void> {
 }
 
 export async function changeStatusTask(id: string, status: string): Promise<Task> {
-    const res = await fetch(`/api/tasks/${id}`,
-                            {method: "PATCH",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ status })
+    const res = await fetch(`/api/tasks/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
     });
 
     if (!res.ok) {
@@ -35,12 +35,11 @@ export async function changeStatusTask(id: string, status: string): Promise<Task
     return res.json();
 }
 
-
-export async function changeStatusSubtask(taskID: string, subtaskId: string, completed: boolean): Promise<Subtask> {
-    const res = await fetch(`/api/tasks/${taskID}/subtasks/${subtaskId}`,
-                            {method: "PATCH",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ completed })
+export async function changeStatusSubtask(taskId: string, subtaskId: string, completed: boolean): Promise<Subtask> {
+    const res = await fetch(`/api/tasks/${taskId}/subtasks/${subtaskId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ completed }),
     });
 
     if (!res.ok) {
@@ -50,12 +49,18 @@ export async function changeStatusSubtask(taskID: string, subtaskId: string, com
     return res.json();
 }
 
-
-export async function createNewTask(title: string, description: string, category: TaskCategory, status: TaskStatus, date: string, subtasks: String[]): Promise<Subtask> {
-    const res = await fetch(`/api/tasks`,
-                            {method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ title, description, category, status, date, subtasks})
+export async function createNewTask(
+    title: string,
+    description: string,
+    category: TaskCategory,
+    status: TaskStatus,
+    date: string,
+    subtasks: String[],
+): Promise<Subtask> {
+    const res = await fetch("/api/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, description, category, status, date, subtasks }),
     });
 
     if (!res.ok) {

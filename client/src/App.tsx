@@ -1,16 +1,26 @@
 import { useState, useEffect } from "react";
-import { getTasks } from "./api/tasks";
+import { Navigate, Route, Routes, useSearchParams } from "react-router-dom";
+
 import type { Task, TaskStatus } from "./types/task";
-import KanbanBoard from "./components/KanbanBoard/KanbanBoard";
+import { getTasks } from "./api/tasks";
 import { TasksContext } from "./context/TasksContext";
+
+import KanbanBoard from "./components/KanbanBoard/KanbanBoard";
 import TaskDetails from "./components/TaskForm/TaskDetails";
-import { useLocation } from "react-router-dom";
-import { Route, Routes } from "react-router-dom";
 import CreateTaskForm from "./components/TaskForm/CreateTaskForm";
 
 
+const TASK_STATUSES: string[] = ["todo", "in_progress", "done"];
+
+function isTaskStatus(value: string | null): value is TaskStatus {
+  return value !== null && TASK_STATUSES.includes(value);
+}
+
+
 function App() {
-  const backgroundLocation = useLocation();
+  const [searchParams] = useSearchParams();
+  const openedTaskId = searchParams.get("task");
+  const createStatus = searchParams.get("new");
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,54 +36,55 @@ function App() {
   function handleDelete(id: string) {
     const originalTasks = [...tasks];
 
-    setTasks(prev => prev.filter(el => el.id !== id))
+    setTasks(prev => prev.filter(el => el.id !== id));
 
     getTasks()
       .then(setTasks)
       .catch((e) => {
-        setError(e.message),
-        setTasks(originalTasks)
-      }) 
+        setError(e.message);
+        setTasks(originalTasks);
+      });
   }
 
   function handleChangeTaskStatus(id: string, status: TaskStatus) {
     const originalTasks = [...tasks];
 
-    setTasks(prev => prev.map(task => 
-      task.id === id ? { ...task, status: status} : task
+    setTasks(prev => prev.map(task =>
+      task.id === id ? { ...task, status } : task
     ));
 
     getTasks()
       .then(setTasks)
       .catch((e) => {
-        setError(e.message),
-        setTasks(originalTasks)
-      }) 
+        setError(e.message);
+        setTasks(originalTasks);
+      });
   }
 
   function handleChangeSubtaskStatus(taskId: string, subtaskId: string, completed: boolean) {
     const originalTasks = [...tasks];
 
-    setTasks(tasks => tasks.map(
-      task => task.id !== taskId ? task : {
-        ...task, subtasks: task.subtasks.map(sub => sub.id !== subtaskId ? sub : {...sub, completed})
+    setTasks(prev => prev.map(task =>
+      task.id !== taskId ? task : {
+        ...task,
+        subtasks: task.subtasks.map(sub =>
+          sub.id !== subtaskId ? sub : { ...sub, completed }
+        ),
       }
-    ))
+    ));
 
     getTasks()
       .then(setTasks)
       .catch((e) => {
-        setError(e.message),
-        setTasks(originalTasks)
-      }) 
+        setError(e.message);
+        setTasks(originalTasks);
+      });
   }
 
   function handleAddTask() {
     getTasks()
       .then(setTasks)
-      .catch((e) => {
-        setError(e.message)
-      }) 
+      .catch((e) => setError(e.message));
   }
 
   if (loading) {
@@ -84,26 +95,25 @@ function App() {
     return <div className="statusMessage statusMessage--error">Ошибка: {error}</div>;
   }
 
-
-  return  (
-    <TasksContext.Provider value={{ tasks: tasks, onTaskDelete: handleDelete, 
-                                    onTaskChage: handleChangeTaskStatus, onSubtaskChange: handleChangeSubtaskStatus,
-                                    onAddTask: handleAddTask}}
-      > 
-      <Routes location={backgroundLocation || location}>
+  return (
+    <TasksContext.Provider
+      value={{
+        tasks,
+        onTaskDelete: handleDelete,
+        onTaskChage: handleChangeTaskStatus,
+        onSubtaskChange: handleChangeSubtaskStatus,
+        onAddTask: handleAddTask,
+      }}
+    >
+      <Routes>
         <Route path="/" element={<KanbanBoard tasks={tasks} />} />
-        <Route path="/tasks/:id" element={<KanbanBoard tasks={tasks} />} />
-        <Route path="tasks/new" element={<KanbanBoard tasks={tasks} />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
-      {backgroundLocation && (
-        <Routes>
-            <Route path="/tasks/:id" element={<TaskDetails />} />
-            <Route path="tasks/new" element={<CreateTaskForm />} />
-        </Routes>
-      )}
+      {openedTaskId && <TaskDetails taskId={openedTaskId} />}
+      {isTaskStatus(createStatus) && <CreateTaskForm status={createStatus} />}
     </TasksContext.Provider>
-  )
+  );
 }
 
 export default App;

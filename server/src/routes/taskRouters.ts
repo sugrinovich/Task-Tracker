@@ -3,11 +3,11 @@ import { tasks } from "../data/mockTasks";
 import { Task, TaskCategory, TaskStatus, Subtask } from "../types/task";
 
 
+const STATUSES: string[] = ["todo", "in_progress", "done"];
+const CATEGORIES: string[] = ["dev", "design", "marketing"];
+
 const taskRouter = Router();
 
-
-const STATUSES: string[] = ["todo", "in_progress", "done"];
-const CATEGORIES: string[] = ["dev", "design", "marketing"]
 
 taskRouter.get("/", (req: Request, res: Response) => {
     const { status, category } = req.query;
@@ -19,7 +19,7 @@ taskRouter.get("/", (req: Request, res: Response) => {
 
     if (category !== undefined && (typeof category !== "string" || !CATEGORIES.includes(category))) {
         res.status(400).json({ message: "Invalid category" });
-        return; 
+        return;
     }
 
     let result = tasks;
@@ -43,22 +43,23 @@ taskRouter.get("/:id", (req: Request, res: Response) => {
         res.status(404).json({ message: "Task not found" });
         return;
     }
-    res.json(task)
+
+    res.json(task);
 });
 
 
 taskRouter.delete("/:id", (req: Request, res: Response) => {
-    const task_idx = tasks.findIndex(t => t.id === req.params.id);
+    const taskIndex = tasks.findIndex(t => t.id === req.params.id);
 
-    if (task_idx === -1) {
+    if (taskIndex === -1) {
         res.status(404).json({ message: "Task not found" });
         return;
     }
-    
-    tasks.splice(task_idx, 1);
+
+    tasks.splice(taskIndex, 1);
 
     res.status(204).send();
-})
+});
 
 
 taskRouter.patch("/:id", (req: Request, res: Response) => {
@@ -72,14 +73,14 @@ taskRouter.patch("/:id", (req: Request, res: Response) => {
     const { status } = req.body ?? {};
 
     if (typeof status !== "string" || !STATUSES.includes(status)) {
-        res.status(400).json({ message: "Invalid status"});
+        res.status(400).json({ message: "Invalid status" });
         return;
     }
 
     task.status = status as TaskStatus;
 
     res.json(task);
-})
+});
 
 
 taskRouter.post("/", (req: Request, res: Response) => {
@@ -121,9 +122,9 @@ taskRouter.post("/", (req: Request, res: Response) => {
             title: typeof subtaskTitle === "string" ? subtaskTitle.trim() : "",
             completed: false,
         };
-    }).filter((subtask: Task["subtasks"][number]) => subtask.title.length > 0);
+    }).filter((subtask: Subtask) => subtask.title.length > 0);
 
-    const newTask = {
+    const newTask: Task = {
         id: `task-${Date.now()}`,
         title: title.trim(),
         description: typeof description === "string" ? description.trim() : "",
@@ -136,7 +137,7 @@ taskRouter.post("/", (req: Request, res: Response) => {
 
     tasks.push(newTask);
     res.status(201).json(newTask);
-})
+});
 
 
 taskRouter.patch("/:taskId/subtasks/:subtaskId", (req: Request, res: Response) => {
@@ -147,7 +148,7 @@ taskRouter.patch("/:taskId/subtasks/:subtaskId", (req: Request, res: Response) =
         return;
     }
 
-    const subtask = task.subtasks.find(el => el.id === req.params.subtaskId)
+    const subtask = task.subtasks.find(el => el.id === req.params.subtaskId);
 
     if (!subtask) {
         res.status(404).json({ message: "Subtask not found" });
@@ -164,6 +165,6 @@ taskRouter.patch("/:taskId/subtasks/:subtaskId", (req: Request, res: Response) =
     subtask.completed = completed;
 
     res.json(subtask);
-})
+});
 
 export default taskRouter;

@@ -1,9 +1,10 @@
 import { createContext } from "react";
-import type { TaskStatus, Task } from "../types/task";
+import type { Task, TaskStatus } from "../types/task";
+
 
 type TasksContextType = {
     tasks: Task[];
-    onTaskDelete: (id: string) => void,
+    onTaskDelete: (id: string) => void;
     onTaskChage: (id: string, status: TaskStatus) => void;
     onSubtaskChange: (taskId: string, subtaskId: string, completed: boolean) => void;
     onAddTask: () => void;
